@@ -1,0 +1,1519 @@
+<!DOCTYPE html><html><head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8">
+    <style>
+    .lamina-layout {
+      width: 100%;
+    }
+    
+    .lamina-layout-desktop {
+      overflow: hidden;
+    }
+    
+    .lamina-layout-desktop-inner {
+      flex: 0 0 var(--lamina-desktop-width, 100%);
+      width: var(--lamina-desktop-width, 100%);
+      max-width: none;
+      transform-origin: top center;
+    }
+    
+    .lamina-layout-mobile {
+      display: none;
+    }
+    
+    @media (min-width: 1025px) {
+      .lamina-layout-desktop {
+        display: flex !important;
+        justify-content: center;
+        align-items: flex-start;
+      }
+    
+      .lamina-layout-mobile {
+        display: none !important;
+      }
+    }
+    
+    @media (max-width: 1024px) {
+      .lamina-layout-desktop {
+        display: none !important;
+      }
+    
+      .lamina-layout-mobile {
+        display: block !important;
+        width: 100% !important;
+        max-width: 100% !important;
+        overflow-x: hidden !important;
+      }
+    
+      .lamina-layout-mobile > * {
+        width: 100% !important;
+        max-width: 100% !important;
+      }
+    }
+    </style>
+    <style>
+    *, *::before, *::after {
+      box-sizing: border-box;
+    }
+    
+    body:not(.lamina-has-mobile-layout) img,
+    body:not(.lamina-has-mobile-layout) video,
+    body:not(.lamina-has-mobile-layout) iframe,
+    body:not(.lamina-has-mobile-layout) svg {
+      max-width: 100%;
+      height: auto;
+    }
+    
+    .lamina-wrapper {
+      content-visibility: auto;
+      contain-intrinsic-size: 1200px;
+      width: 100%;
+    }
+    
+    /* Custom elegant scrollbar inside the landing page */
+    ::-webkit-scrollbar {
+      width: 8px;
+      height: 8px;
+    }
+    ::-webkit-scrollbar-track {
+      background: transparent;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: rgba(138, 138, 150, 0.3);
+      border-radius: 4px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: rgba(138, 138, 150, 0.5);
+    }
+    
+    @media (max-width: 1024px) {
+      /* Forçar o container principal (primeira div filha do body) a 100% largura e permitir rolagem */
+      html, body {
+        height: auto !important;
+        overflow-y: auto !important;
+        overflow-x: hidden !important;
+      }
+    
+      body:not(.lamina-has-mobile-layout) > div,
+      body:not(.lamina-has-mobile-layout) .lamina-wrapper,
+      body:not(.lamina-has-mobile-layout) .lamina-wrapper > div {
+        width: 100% !important;
+        max-width: 100% !important;
+      }
+    
+      body.lamina-has-mobile-layout .lamina-wrapper,
+      body.lamina-has-mobile-layout .lamina-layout-mobile {
+        width: 100% !important;
+        max-width: 100% !important;
+      }
+    
+      /*
+       * Mobile/tablet image normalization.
+       * Remove this block if future exports should preserve image left offsets below 1024px.
+       */
+      /* lamina-qa: escopado para nao esticar as imagens do layout mobile dedicado */
+      body:not(.lamina-has-mobile-layout) img {
+        width: 100% !important;
+        left: 0px !important;
+      }
+    
+      /* Imagens: altura fluida em laminas sem layout mobile dedicado */
+      body:not(.lamina-has-mobile-layout) img {
+        height: auto !important;
+      }
+    
+      /* Containers flex/inline-flex: empilhar em coluna e ajustar altura */
+      body:not(.lamina-has-mobile-layout) [style*="inline-flex"],
+      body:not(.lamina-has-mobile-layout) [style*="display: flex"] {
+        flex-direction: column !important;
+        align-items: stretch !important;
+        height: auto !important;
+      }
+    
+      /* Reduzir paddings laterais excessivos */
+      body:not(.lamina-has-mobile-layout) [style*="padding-left"],
+      body:not(.lamina-has-mobile-layout) [style*="padding-right"] {
+        padding-left: 16px !important;
+        padding-right: 16px !important;
+      }
+    
+      /* Quebra de texto */
+      body:not(.lamina-has-mobile-layout) [style*="white-space: nowrap"] {
+        white-space: normal !important;
+        overflow-wrap: break-word !important;
+      }
+    }
+    </style>
+    <style>
+    @media (max-width: 427px) {
+      body.lamina-has-mobile-layout .lamina-layout-mobile [data-lamina-fluid-small="true"] {
+        width: 100% !important;
+        max-width: 100% !important;
+        left: 0 !important;
+      }
+    }
+    
+    @media (min-width: 429px) and (max-width: 1000px) {
+      body.lamina-has-mobile-layout .lamina-layout-mobile [data-lamina-fluid-tablet="true"] {
+        width: 100% !important;
+        max-width: 100% !important;
+        left: 0 !important;
+      }
+    }
+    </style>
+    
+    
+    
+  <style>
+/* lamina-qa - escala proporcional da prancheta mobile (<= 1024px) */
+@media (max-width: 1024px) {
+  body.lamina-has-mobile-layout .lamina-layout-mobile[data-lamina-fit] {
+    position: relative;
+    overflow: hidden !important;
+    height: var(--lamina-fit-height, auto);
+  }
+
+  body.lamina-has-mobile-layout .lamina-layout-mobile[data-lamina-fit] > [data-lamina-fit-board] {
+    width: var(--lamina-fit-width, 428px) !important;
+    max-width: none !important;
+    margin-left: var(--lamina-fit-offset, 0px);
+    vertical-align: top;
+    transform: scale(var(--lamina-fit-scale, 1));
+    transform-origin: top left;
+  }
+}
+</style>
+
+<link rel="preconnect" href="https://fonts.googleapis.com" data-lamina-font-import="">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="" data-lamina-font-import="">
+<link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet" data-lamina-font-import="open-sans">
+<style data-lamina-font-import="dji-demi">
+@font-face {
+  font-family: "DJI Demi";
+  src: url("https://multilaser.vteximg.com.br/arquivos/Dji-Demi.woff2.css") format("woff2");
+  font-weight: 600;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Dji-Demi";
+  src: url("https://multilaser.vteximg.com.br/arquivos/Dji-Demi.woff2.css") format("woff2");
+  font-weight: 600;
+  font-style: normal;
+  font-display: swap;
+}
+</style>
+<style data-lamina-font-import="dji-light">
+@font-face {
+  font-family: "Dji-Light";
+  src: url("https://multilaser.vteximg.com.br/arquivos/Dji-Light.ttf.css") format("truetype");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+</style>
+<style data-lamina-font-import="dji-book">
+@font-face {
+  font-family: "Dji-Book";
+  src: url("https://multilaser.vteximg.com.br/arquivos/Dji-Book.ttf.css") format("truetype");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+</style>
+<style>
+/* dji-rs-4-pro - ajustes de QA contra o Figma */
+
+/* Letter-spacing do Figma (o export descartou): -4% na maioria dos textos; excecoes (-2%, -3%) ficam inline. */
+.lamina-wrapper [style*="font-size"] {
+  letter-spacing: -0.04em;
+}
+
+/* Fontes DJI: na loja da DJI o store-theme ja declara "DJI Demi", "DJI Light" e "DJI Book". */
+.lamina-wrapper [style*="font-family: Dji-Demi"] {
+  font-family: "Dji-Demi", "DJI Demi", "Open Sans", sans-serif !important;
+}
+.lamina-wrapper [style*="font-family: Dji-Light"] {
+  font-family: "Dji-Light", "DJI Light", "Open Sans", sans-serif !important;
+}
+.lamina-wrapper [style*="font-family: Dji-Book"] {
+  font-family: "Dji-Book", "DJI Book", "Dji-Light", "DJI Light", "Open Sans", sans-serif !important;
+}
+.lamina-wrapper [style*="font-family: Helvetica"] {
+  font-family: Helvetica, Arial, sans-serif !important;
+}
+
+/* Abas bluetooth (Component 1 do Figma): sublinhado da aba ativa vem do runtime; aqui so o cursor/area. */
+.lamina-wrapper .dji-rs-4-pro-bt {
+  overflow: hidden;
+}
+.lamina-wrapper .dji-rs-4-pro-bt .lamina-tab-trigger {
+  border-bottom: 0;
+}
+.lamina-layout-desktop .dji-rs-4-pro-bt .lamina-tab-trigger {
+  padding: 8.35px 12.53px !important;
+}
+/* Mobile: no Figma as abas sao o componente do desktop reduzido (texto de 7px, cortado a esquerda).
+   Aqui ocupam a largura da prancheta em 3 colunas, com rotulos legiveis em ate 2 linhas. */
+.lamina-layout-mobile .dji-rs-4-pro-bt .dji-rs-4-pro-24 {
+  left: 0 !important;
+  width: 428px !important;
+  height: auto !important;
+  align-items: stretch !important;
+  gap: 0 !important;
+  overflow: visible !important;
+}
+.lamina-layout-mobile .dji-rs-4-pro-bt .lamina-tab-trigger {
+  flex: 1 1 0 !important;
+  min-width: 0 !important;
+  padding: 6px 4px !important;
+}
+.lamina-layout-mobile .dji-rs-4-pro-bt .lamina-tab-trigger,
+.lamina-layout-mobile .dji-rs-4-pro-bt .lamina-tab-trigger * {
+  white-space: normal !important;
+}
+.lamina-layout-mobile .dji-rs-4-pro-bt .dji-rs-4-pro-109 {
+  font-size: 10.5px !important;
+  line-height: 13px;
+}
+/* Texto da aba: no Figma a caixa tem 202px (texto em 9 linhas). Mais larga para caber entre as abas e a pilula seguinte. */
+.lamina-layout-mobile .dji-rs-4-pro-bt .dji-rs-4-pro-110 {
+  top: 246px !important;
+  left: 44px !important;
+  width: 340px !important;
+}
+.lamina-layout-mobile .dji-rs-4-pro-201 {
+  height: 360px !important;
+}
+
+/* "Na caixa": abas Standard | Combo (no Figma as duas listas estavam em frames separados). */
+.lamina-wrapper .dji-rs-4-pro-box {
+  position: relative;
+  background: white;
+  color: black;
+}
+.lamina-wrapper .dji-rs-4-pro-box-heading {
+  text-align: center;
+  font-family: Helvetica, Arial, sans-serif;
+  font-weight: 700;
+  color: black;
+}
+.lamina-wrapper .dji-rs-4-pro-box-tabs {
+  display: flex;
+  justify-content: center;
+}
+.lamina-wrapper .dji-rs-4-pro-box-tablist {
+  display: flex;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.09);
+}
+.lamina-wrapper .dji-rs-4-pro-box-tab {
+  font-family: "Open Sans", sans-serif;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  text-align: center;
+}
+.lamina-wrapper .dji-rs-4-pro-box-tab[aria-selected="true"] {
+  color: black;
+}
+.lamina-wrapper .dji-rs-4-pro-box-tab[aria-selected="false"] {
+  color: rgba(0, 0, 0, 0.45);
+}
+.lamina-wrapper .dji-rs-4-pro-box-title {
+  font-family: "Open Sans", sans-serif;
+  font-weight: 600;
+  color: #444444;
+}
+.lamina-wrapper .dji-rs-4-pro-box-grid {
+  display: grid;
+  grid-template-columns: repeat(var(--cols), 185px);
+  justify-content: start;
+}
+.lamina-wrapper .dji-rs-4-pro-box-card {
+  width: 185px;
+  height: 185px;
+  border-radius: 14px;
+  background: rgba(217, 217, 217, 0.28);
+  overflow: hidden;
+}
+.lamina-wrapper .dji-rs-4-pro-box-card img {
+  display: block;
+  width: 185px;
+  height: 185px;
+}
+.lamina-wrapper .dji-rs-4-pro-box-label {
+  margin-top: 9px;
+  font-family: Helvetica, Arial, sans-serif;
+  font-size: 16px;
+  line-height: 18.4px;
+  text-align: center;
+  color: black;
+}
+.lamina-wrapper .dji-rs-4-pro-notes {
+  position: relative;
+  color: white;
+  font-family: "Open Sans", sans-serif;
+  font-size: 10px;
+  line-height: 13.62px;
+  letter-spacing: -0.02em;
+}
+.lamina-wrapper .dji-rs-4-pro-notes p {
+  margin: 0 0 15px;
+}
+.lamina-wrapper .dji-rs-4-pro-notes p:last-child {
+  margin-bottom: 0;
+}
+
+/* Desktop (1920): grade de 5 colunas centralizada, medidas do frame "CONTEUDO COMBO". */
+.lamina-layout-desktop .dji-rs-4-pro-box {
+  padding: 74px 0 70px;
+}
+.lamina-layout-desktop .dji-rs-4-pro-box-heading {
+  font-size: 42px;
+  line-height: 48px;
+}
+.lamina-layout-desktop .dji-rs-4-pro-box-tabs {
+  margin-top: 20px;
+}
+.lamina-layout-desktop .dji-rs-4-pro-box-tablist {
+  gap: 48px;
+}
+.lamina-layout-desktop .dji-rs-4-pro-box-tab {
+  padding: 10px 6px;
+  font-size: 20px;
+  line-height: 26px;
+}
+.lamina-layout-desktop .dji-rs-4-pro-box-panel {
+  width: 1073px;
+  margin: 0 auto;
+}
+.lamina-layout-desktop .dji-rs-4-pro-box-title {
+  margin-top: 24px;
+  font-size: 32px;
+  line-height: 38.4px;
+}
+.lamina-layout-desktop .dji-rs-4-pro-box-grid {
+  --cols: 5;
+  margin-top: 48px;
+  column-gap: 37px;
+  grid-auto-rows: 272px;
+}
+.lamina-layout-desktop .dji-rs-4-pro-box-label {
+  width: 223px;
+  margin-left: -19px;
+}
+.lamina-layout-desktop .dji-rs-4-pro-notes {
+  width: 1254px;
+  margin-left: 360px;
+  padding: 63px 0 442px;
+}
+
+/* Mobile (prancheta de 428): 2 colunas, medidas do frame mobile. */
+.lamina-layout-mobile .dji-rs-4-pro-box {
+  padding: 58px 0 64px;
+}
+.lamina-layout-mobile .dji-rs-4-pro-box-heading {
+  font-size: 36px;
+  line-height: 41px;
+}
+.lamina-layout-mobile .dji-rs-4-pro-box-tabs {
+  margin-top: 20px;
+}
+.lamina-layout-mobile .dji-rs-4-pro-box-tablist {
+  justify-content: center !important;
+  width: auto !important;
+  gap: 40px;
+  overflow: visible !important;
+}
+.lamina-layout-mobile .dji-rs-4-pro-box-tab {
+  padding: 8px 6px;
+  font-size: 18px;
+  line-height: 24px;
+}
+.lamina-layout-mobile .dji-rs-4-pro-box-title {
+  margin: 28px 0 0 27px;
+  font-size: 20px;
+  line-height: 24px;
+}
+.lamina-layout-mobile .dji-rs-4-pro-box-grid {
+  --cols: 2;
+  margin: 34px 0 0 26px;
+  column-gap: 10px;
+  row-gap: 17px;
+}
+.lamina-layout-mobile .dji-rs-4-pro-box-label {
+  width: 195px;
+  margin-left: -5px;
+}
+.lamina-layout-mobile .dji-rs-4-pro-notes {
+  width: 324px;
+  margin-left: 48px;
+  padding: 64px 0 100px;
+}
+
+/* Tablet acima de 856px: fundo da lamina e faixas laterais com a cor de cada secao. */
+@media (max-width: 1024px) {
+  body.lamina-has-mobile-layout .lamina-layout-mobile[data-lamina-fit] {
+    background: black;
+  }
+  body.lamina-has-mobile-layout .lamina-layout-mobile > .dji-rs-4-pro-bands {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    pointer-events: none;
+  }
+  .dji-rs-4-pro-bands > div {
+    height: calc(var(--band) * var(--lamina-fit-scale, 1));
+  }
+  .dji-rs-4-pro-bands > .dji-rs-4-pro-band-box {
+    height: calc(var(--dji-rs-4-pro-box-h, 0px) * var(--lamina-fit-scale, 1));
+  }
+}
+</style>
+</head>
+  <body class="lamina-has-mobile-layout" style="overflow-x: hidden">
+    <div class="lamina-wrapper">
+      <div class="lamina-layout lamina-layout-desktop" data-design-width="1920" style="--lamina-desktop-width: 1920px">
+        <div class="lamina-layout-desktop-inner">
+          <div class="dji-rs-4-pro-1" style="width: 1920px; height: auto; position: relative; background: black; overflow: hidden; padding-top: 23396px">
+            <img class="dji-rs-4-pro-2" style="width: 590px; height: 366px; left: 963px; top: 13882px; position: absolute; border-radius: 40px" src="assets/dji-rs-4-pro-1.png" decoding="async" fetchpriority="high" loading="eager">
+            <img class="dji-rs-4-pro-3" style="width: 581px; height: 663px; left: 984px; top: 16885px; position: absolute; border-radius: 40px" src="assets/dji-rs-4-pro-2.png" decoding="async" loading="lazy">
+            
+            <img class="dji-rs-4-pro-5" style="width: 1196px; height: 551px; left: 362px; top: 664px; position: absolute; opacity: 0.8" src="assets/dji-rs-4-pro-3.png" decoding="async" loading="lazy">
+            <div class="dji-rs-4-pro-6" style="width: 1203px; height: 551px; left: 362px; top: 664px; position: absolute; background: linear-gradient(180deg, rgba(0, 0, 0, 0) 0%, black 100%)">
+            </div>
+            <div class="dji-rs-4-pro-7" style="width: 782px; left: 481px; top: 912px; position: absolute; color: white; font-size: 22px; font-family: Open Sans; font-weight: 400; line-height: 28.60px; word-wrap: break-word">O DJI RS 4 Pro é um estabilizador expansível de ponta, com integração perfeita com o sistema de controle de lentes DJI Focus Pro, DJI Transmission e com um vasto ecossistema de controle. Essa sinergia traz uma solução de produção em grande escala que une estabilização, transmissão, monitoramento, foco e controle para a indústria cinematográfica e televisiva. Amplie os horizontes de possibilidades criativas, permitindo que você libere todo o seu potencial de cinegrafista.</div>
+            <div class="dji-rs-4-pro-8" style="width: 1183px; height: 250px; left: 368px; top: 1314px; position: absolute; background: black; border-radius: 36px">
+            </div>
+            <div class="dji-rs-4-pro-pill" aria-hidden="true" style="width: 1183px; height: 289px; left: 368px; top: 1275px; position: absolute; overflow: hidden; border-radius: 36px"><div class="dji-rs-4-pro-10" style="width: 1000px; height: 148px; left: 102px; top: 90px; position: absolute; opacity: 0.80; background: linear-gradient(180deg, rgba(255, 77, 79, 0.30) 0%, rgba(0, 0, 0, 0.30) 100%); border-radius: 50%; filter: blur(37.02px)">
+            </div><div class="dji-rs-4-pro-11" style="width: 1114px; height: 130px; left: 23px; top: 224px; position: absolute; background: linear-gradient(180deg, rgba(0, 0, 0, 0) 0%, black 100%)">
+            </div></div>
+            
+            
+            <div class="dji-rs-4-pro-12" style="left: 685px; top: 1354px; position: absolute; text-align: center; color: transparent; font-size: 100px; font-family: Open Sans; font-weight: 600; line-height: 120px; word-wrap: break-word; padding-top: 25px; background: linear-gradient(180deg, #F64C32 17.24%, #400303 100%); -webkit-background-clip: text; background-clip: text; filter: drop-shadow(0px 4px 2px rgba(0, 0, 0, 0.25)); white-space: nowrap"><sup style="font-size: 63px; line-height: 0; vertical-align: 34.8px">Repleto de recursos</sup></div>
+            <div class="dji-rs-4-pro-8" style="width: 1183px; height: 203px; left: 368px; top: 5101px; position: absolute; background: black; border-radius: 36px">
+            </div>
+            <div class="dji-rs-4-pro-pill" aria-hidden="true" style="width: 1183px; height: 250px; left: 368px; top: 5101px; position: absolute; overflow: hidden; border-radius: 36px"><div class="dji-rs-4-pro-10" style="width: 478px; height: 275px; left: 363px; top: 7px; position: absolute; opacity: 0.80; background: linear-gradient(180deg, rgba(255, 77, 79, 0) 1%, rgba(0, 0, 0, 0.30) 100%); border-radius: 50%; filter: blur(30.81px)">
+            </div><div class="dji-rs-4-pro-13" style="width: 253.31px; height: 736.62px; left: 256.03px; top: 335.08px; position: absolute; transform: rotate(-103deg); transform-origin: top left; opacity: 0.80; background: rgba(222, 90, 111, 0.05); box-shadow: -18.439537048339844px 18.439537048339844px 46.621952056884766px -45.11801528930664px rgba(68, 68, 68, 0.22) inset; border-radius: 50%; filter: blur(6.38px); backdrop-filter: blur(38.12px)">
+            </div></div>
+            
+            
+            <div class="dji-rs-4-pro-14" style="width: 651px; height: 299px; left: 634px; top: 5087px; position: absolute; text-align: center; justify-content: center; display: flex; flex-direction: column; color: transparent; font-size: 100px; font-family: Open Sans; font-weight: 600; line-height: 60px; word-wrap: break-word; padding-top: 25px; background: linear-gradient(180deg, #F64C32 8.36%, #400303 100%); -webkit-background-clip: text; background-clip: text; filter: drop-shadow(0px 4px 2px rgba(0, 0, 0, 0.25)); white-space: nowrap"><span class="lamina-text-block" style="display: block"><sup style="font-size: 63px; line-height: 0; vertical-align: 34.8px">Excelente estabilidade,<br>padrões excepcionais</sup></span></div>
+            <div class="dji-rs-4-pro-15" style="left: 830px; top: 5127px; position: absolute; color: rgba(255, 255, 255, 0.60); font-size: 24px; font-family: Open Sans; font-weight: 400; line-height: 48px; word-wrap: break-word">Estabilização profissional</div>
+            <img class="dji-rs-4-pro-16" style="width: 566px; height: 566px; left: 362px; top: 5351px; position: absolute" src="assets/dji-rs-4-pro-4.png" decoding="async" loading="lazy">
+            <div class="dji-rs-4-pro-17" style="width: 456px; left: 973px; top: 5474px; position: absolute"><span style="color: white; font-size: 22px; font-family: Open Sans; font-weight: 700; line-height: 28.60px; word-wrap: break-word">O DJI RS 4 Pro apresenta um aumento de 20%</span><sup style="color: white; font-size: 13.86px; font-family: Open Sans; font-weight: 700; line-height: 0; word-wrap: break-word; vertical-align: 7.66px">[2] </sup><span style="color: white; font-size: 22px; font-family: Open Sans; font-weight: 700; line-height: 28.60px; word-wrap: break-word">no torque do motor em três eixos, oferecendo maior redundância de energia quando balanceado.</span><span style="color: white; font-size: 22px; font-family: Open Sans; font-weight: 400; line-height: 28.60px; word-wrap: break-word"> Isso ajuda a garantir que o gimbal permaneça responsivo e preciso nos movimentos de rastreamento, mesmo com câmeras pesadas ou com vários acessórios. Além disso, fornece energia suficiente para suportar a estabilização do gimbal em vários cenários de gravação.<br>
+              </span></div>
+            <img class="dji-rs-4-pro-18" style="width: 612px; height: 706px; left: 367px; top: 2314px; position: absolute; background: linear-gradient(255deg, rgba(0, 0, 0, 0) 44%, rgba(0, 0, 0, 0.80) 76%); border-radius: 41px" src="assets/dji-rs-4-pro-5.png" decoding="async" loading="lazy">
+            <div class="dji-rs-4-pro-19" style="width: 408px; left: 993px; top: 2615px; position: absolute"><span style="color: white; font-size: 22px; font-family: Open Sans; font-weight: 400; line-height: 28.60px; word-wrap: break-word; letter-spacing: -0.02em">Projetado com uma placa horizontal totalmente nova, o DJI RS 4 Pro permite a segunda geração de disparo vertical nativo para maior eficiência. Basta liberar a base horizontal e fixá-la na posição vertical para alternar facilmente as gravações verticais.</span><sup style="color: white; font-size: 13.86px; font-family: Open Sans; font-weight: 400; line-height: 0; word-wrap: break-word; letter-spacing: -0.02em; vertical-align: 7.66px"> [1]</sup><span style="color: white; font-size: 22px; font-family: Open Sans; font-weight: 400; line-height: 28.60px; word-wrap: break-word; letter-spacing: -0.02em">
+              </span></div>
+            <div class="dji-rs-4-pro-20" style="width: 350px; left: 993px; top: 2507px; position: absolute"><span style="color: white; font-size: 34px; font-family: Open Sans; font-weight: 600; line-height: 40.80px; word-wrap: break-word">Gravação vertical nativa da </span><span style="color: #FF4D4F; font-size: 34px; font-family: Open Sans; font-weight: 600; line-height: 40.80px; word-wrap: break-word">2ª geração</span></div>
+            <img class="dji-rs-4-pro-21" style="width: 1196px; height: 706px; left: 367px; top: 1577px; position: absolute; background: linear-gradient(255deg, rgba(0, 0, 0, 0) 44%, rgba(0, 0, 0, 0.80) 76%); border-radius: 41px" src="assets/dji-rs-4-pro-6.png" decoding="async" loading="lazy">
+            <div class="dji-rs-4-pro-19" style="width: 408px; left: 455px; top: 1974px; position: absolute"><span style="color: white; font-size: 22px; font-family: Open Sans; font-weight: 700; line-height: 28.60px; word-wrap: break-word; letter-spacing: -0.02em">Equipado com braços de eixo de fibra de carbono, o DJI RS 4 Pro possui uma capacidade de carga útil de 4,5 kg, </span><span style="color: white; font-size: 22px; font-family: Open Sans; font-weight: 400; line-height: 28.60px; word-wrap: break-word; letter-spacing: -0.02em">bem como potência e torque robustos. Acomode facilmente as principais configurações de lente e câmeras sem espelho e cinematográficas.</span></div>
+            <div class="dji-rs-4-pro-23" style="left: 455px; top: 1920px; position: absolute; text-align: center; color: #FF4D4F; font-size: 34px; font-family: Open Sans; font-weight: 600; line-height: 40.80px; word-wrap: break-word">Carga útil poderosa</div>
+            <div class="dji-rs-4-pro-24" style="padding-left: 16px; padding-right: 16px; padding-top: 9px; padding-bottom: 9px; left: 455px; top: 2203px; position: absolute; background: black; overflow: hidden; border-radius: 100px; outline: 1px white solid; outline-offset: -1px; justify-content: center; align-items: center; gap: 10px; display: inline-flex">
+              <div class="dji-rs-4-pro-25" style="width: 335px; color: white; font-size: 22px; font-family: Open Sans; font-weight: 400; line-height: 15px; word-wrap: break-word"><sup style="font-size: 13.86px; line-height: 15px; vertical-align: baseline">Verifique a lista de compatibilidade de câmeras e lentes</sup></div>
+            </div>
+            <img class="dji-rs-4-pro-26" style="width: 642px; height: 642px; left: 958px; top: 3128px; position: absolute" src="assets/dji-rs-4-pro-7.png" decoding="async" loading="lazy">
+            <div class="dji-rs-4-pro-27" style="width: 429px; left: 458px; top: 3232px; position: absolute; color: white; font-size: 22px; font-family: Open Sans; font-weight: 400; line-height: 28.60px; word-wrap: break-word; letter-spacing: -0.02em">Agora, o eixo de rotação possui rolamentos, o que facilita os ajustes. Todos os três eixos apresentam revestimento de Teflon™, com baixo coeficiente de atrito, garantindo equilíbrio suave mesmo na montagem de câmeras pesadas.<br><br>Ao trocar de câmera ou lente, um botão de ajuste fino no eixo de inclinação permite movê-la para frente ou para trás, alcançando um equilíbrio preciso em nível milimétrico. A base de rápida liberação superior possui um guia de posicionamento ajustável que evita que a câmera se solte ou desloque sozinha.<br></div>
+            <div class="dji-rs-4-pro-28" style="width: 574px; left: 673px; top: 3076px; position: absolute; text-align: center; justify-content: center; display: flex; flex-direction: column; color: #FF4D4F; font-size: 48px; font-family: Open Sans; font-weight: 600; line-height: 52px; word-wrap: break-word">Estabilidade de calibração</div>
+            <img class="dji-rs-4-pro-29" style="width: 544px; height: 544px; left: 441px; top: 3837px; position: absolute" src="assets/dji-rs-4-pro-8.png" decoding="async" loading="lazy">
+            <div class="dji-rs-4-pro-30" style="width: 488px; left: 972px; top: 4032px; position: absolute; color: white; font-size: 22px; font-family: Open Sans; font-weight: 400; line-height: 28.60px; word-wrap: break-word; letter-spacing: -0.02em">A tela de OLED sensível ao toque incorpora um novo recurso de bloqueio automático, evitando toques acidentais durante a filmagem. Quando bloqueada, a tela ainda exibe os modos atuais do gimbal e do joystick com baixo brilho, reduzindo o consumo de energia.</div>
+            <div class="dji-rs-4-pro-31" style="left: 972px; top: 3978px; position: absolute; color: #FF4D4F; font-size: 40px; font-family: Open Sans; font-weight: 600; line-height: 48px; word-wrap: break-word">Bloqueio automático da tela</div>
+            <img class="dji-rs-4-pro-32" style="width: 616px; height: 544px; left: 935px; top: 4469px; position: absolute" src="assets/dji-rs-4-pro-9.png" decoding="async" loading="lazy">
+            <div class="dji-rs-4-pro-33" style="width: 444px; left: 458px; top: 4679px; position: absolute; color: white; font-size: 22px; font-family: Open Sans; font-weight: 400; line-height: 28.60px; word-wrap: break-word">Com os bloqueios de eixo automatizados de última geração, o DJI RS 4 Pro pode começar a trabalhar rapidamente ou entrar no modo de suspensão, melhorando significativamente a eficiência de gravação, transição e armazenamento. As travas dos eixos foram atualizadas de forma a reduzir os espaços, limitando ainda mais os tremores do estabilizador.<br></div>
+            <div class="dji-rs-4-pro-34" style="width: 432px; height: 117px; left: 458px; top: 4562px; position: absolute; color: #FF4D4F; font-size: 40px; font-family: Open Sans; font-weight: 600; line-height: 48px; word-wrap: break-word">Travas automáticas dos eixos da 2ª geração</div>
+            <img class="dji-rs-4-pro-21" style="width: 1203px; height: 803.74px; left: 362px; top: 6186.13px; position: absolute" src="assets/dji-rs-4-pro-10.png" decoding="async" loading="lazy">
+            <div class="dji-rs-4-pro-35" style="width: 542px; left: 887px; top: 5993px; position: absolute; color: white; font-size: 20px; font-family: Open Sans; font-weight: 600; line-height: 26px; word-wrap: break-word">O novo Modo de Suporte para Automóveis otimiza os algoritmos de estabilização do estabilizador, com base nas vibrações do veículo e nos dados de resistência ao vento, garantindo gravações mais nítidas mesmo quando capturadas em um veículo em movimento.</div>
+            <div class="dji-rs-4-pro-36" style="width: 477px; height: 97px; left: 458px; top: 5993px; position: absolute; color: #FF4D4F; font-size: 48px; font-family: Open Sans; font-weight: 600; line-height: 52.80px; word-wrap: break-word">Modo de Suporte para Automóveis</div>
+            <img class="dji-rs-4-pro-18" style="width: 1197px; height: 798px; left: 368px; top: 7422px; position: absolute" src="assets/dji-rs-4-pro-11.png" decoding="async" loading="lazy">
+            <div class="dji-rs-4-pro-37" style="width: 1203px; height: 667px; left: 365px; top: 7553px; position: absolute; background: linear-gradient(180deg, rgba(0, 0, 0, 0) 0%, black 100%)">
+            </div>
+            <div class="dji-rs-4-pro-38" style="width: 595px; left: 887px; top: 7096px; position: absolute; color: white; font-size: 20px; font-family: Open Sans; font-weight: 400; line-height: 26px; word-wrap: break-word">O algoritmo de estabilização RS de 4ª geração foi otimizado de forma abrangente para diferentes cenários de uso. ‌Ele atinge um equilíbrio superior entre a força de estabilização e a sensação tátil do movimento da câmera, proporcionando excelente desempenho e uma experiência de usuário aprimorada. <br><br>Impulsionado pelos algoritmos de estabilização da 4ª geração do RS, o DJI RS 4 Pro traz estabilidade significativamente aprimorada em gravações verticais, dominando facilmente cenas dinâmicas, como em corridas ou gravações em ângulos baixos.<br></div>
+            <div class="dji-rs-4-pro-39" style="width: 387px; left: 458px; top: 7096px; position: absolute; color: #FF4D4F; font-size: 48px; font-family: Open Sans; font-weight: 600; line-height: 52.80px; word-wrap: break-word">Algoritmos de estabilização da 4ª geração do RS</div>
+            <div class="dji-rs-4-pro-37" style="width: 1203px; height: 667px; left: 362px; top: 6323px; position: absolute; background: linear-gradient(180deg, rgba(0, 0, 0, 0) 0%, black 100%)">
+            </div>
+            <img class="dji-rs-4-pro-40" style="width: 1202px; height: 685px; left: 362px; top: 8514px; position: absolute" src="assets/dji-rs-4-pro-12.png" decoding="async" loading="lazy">
+            <div class="dji-rs-4-pro-37" style="width: 1203px; height: 667px; left: 361px; top: 8532px; position: absolute; background: linear-gradient(180deg, rgba(0, 0, 0, 0) 0%, black 100%)">
+            </div>
+            <div class="dji-rs-4-pro-41" style="width: 571px; height: 201px; left: 939px; top: 9269px; position: absolute"><span style="color: #CCCCCC; font-size: 20px; font-family: Open Sans; font-weight: 600; line-height: 26px; word-wrap: break-word">Quando combinado com o novo Focus Pro LiDAR ‌</span><sup style="color: #CCCCCC; font-size: 12.6px; font-family: Open Sans; font-weight: 600; line-height: 0; word-wrap: break-word; vertical-align: 6.96px">[3]‌</sup><span style="color: #CCCCCC; font-size: 20px; font-family: Open Sans; font-weight: 600; line-height: 26px; word-wrap: break-word"> e o Focus Pro Motor‌ </span><sup style="color: #CCCCCC; font-size: 12.6px; font-family: Open Sans; font-weight: 600; line-height: 0; word-wrap: break-word; vertical-align: 6.96px">[4]‌</sup><span style="color: #CCCCCC; font-size: 20px; font-family: Open Sans; font-weight: 600; line-height: 26px; word-wrap: break-word">, o DJI RS 4 Pro permite que os cineastas solo experimentem um foco automático LiDAR mais preciso, distante e inteligente, obtendo controle sobre a expressão cinematográfica em cenários dinâmicos de filmagem.</span></div>
+            <div class="dji-rs-4-pro-42" style="width: 401px; left: 470px; top: 9269px; position: absolute; color: white; font-size: 32px; font-family: Open Sans; font-weight: 600; line-height: 41.60px; word-wrap: break-word">Foco LiDAR inteligente para gravações confiáveis</div>
+            <div class="dji-rs-4-pro-43" style="width: 383px; left: 470px; top: 10140px; position: absolute"><span style="color: white; font-size: 20px; font-family: Open Sans; font-weight: 400; line-height: 26px; word-wrap: break-word; letter-spacing: -0.03em">O salto de 77% aprimora a detecção</span><sup style="color: white; font-size: 12.6px; font-family: Open Sans; font-weight: 400; line-height: 0; word-wrap: break-word; letter-spacing: -0.03em; vertical-align: 6.96px"> [5]</sup><span style="color: white; font-size: 20px; font-family: Open Sans; font-weight: 400; line-height: 26px; word-wrap: break-word; letter-spacing: -0.03em"> de bordas de objetos e humanos, além de reduzir, efetivamente, a busca por foco.</span></div>
+            <div class="dji-rs-4-pro-44" style="left: 470px; top: 10097px; position: absolute; color: white; font-size: 20px; font-family: Open Sans; font-weight: 600; line-height: 26px; word-wrap: break-word; letter-spacing: -0.03em">pontos de alcance</div>
+            <div class="dji-rs-4-pro-45" style="width: 152px; height: 42px; left: 470px; top: 10055px; position: absolute; color: #FF4D4F; font-size: 40px; font-family: Open Sans; font-weight: 600; line-height: 52px; word-wrap: break-word">76.800<br></div>
+            <div class="dji-rs-4-pro-46" style="width: 518px; left: 973px; top: 10466px; position: absolute"><span style="color: white; font-size: 20px; font-family: Open Sans; font-weight: 400; line-height: 26px; word-wrap: break-word; letter-spacing: -0.03em">Concentre-se em alvos em movimento com a coleta mais rápida de informações do alvo e a velocidade aprimorada do Motor Focus Pro.</span><sup style="color: white; font-size: 12.6px; font-family: Open Sans; font-weight: 400; line-height: 0; word-wrap: break-word; letter-spacing: -0.03em; vertical-align: 6.96px">4]</sup></div>
+            <div class="dji-rs-4-pro-44" style="left: 973px; top: 10423px; position: absolute; color: white; font-size: 20px; font-family: Open Sans; font-weight: 600; line-height: 26px; word-wrap: break-word; letter-spacing: -0.03em">Taxa de atualização do LiDAR de 30 Hz</div>
+            <div class="dji-rs-4-pro-45" style="width: 152px; height: 42px; left: 973px; top: 10381px; position: absolute; color: #FF4D4F; font-size: 40px; font-family: Open Sans; font-weight: 600; line-height: 52px; word-wrap: break-word">30 Hz</div>
+            <div class="dji-rs-4-pro-49" style="width: 363px; left: 471px; top: 10466px; position: absolute; color: white; font-size: 20px; font-family: Open Sans; font-weight: 400; line-height: 26px; word-wrap: break-word; letter-spacing: -0.03em">Benéfico para composições de borda e close-ups, proporcionando um espaço de enquadramento maior.<br></div>
+            <div class="dji-rs-4-pro-44" style="left: 471px; top: 10423px; position: absolute; color: white; font-size: 20px; font-family: Open Sans; font-weight: 600; line-height: 26px; word-wrap: break-word; letter-spacing: -0.03em">Campo de visão</div>
+            <div style="width: 152px; height: 42px; left: 471px; top: 10381px; position: absolute; color: #FF4D4F; font-size: 40px; font-family: Open Sans; font-weight: 600; line-height: 52px; word-wrap: break-word">70°</div>
+            <div class="dji-rs-4-pro-51" style="width: 498px; left: 973px; top: 10160px; position: absolute"><span style="color: white; font-size: 20px; font-family: Open Sans; font-weight: 400; line-height: 26px; word-wrap: break-word; letter-spacing: -0.03em">A distância de foco do LiDAR ao alvo humano foi prolongada em 20 metros, aproximadamente três vezes maior se comparada à geração anterior </span><sup style="color: white; font-size: 12.6px; font-family: Open Sans; font-weight: 400; line-height: 0; word-wrap: break-word; letter-spacing: -0.03em; vertical-align: 6.96px">[5]</sup><span style="color: white; font-size: 20px; font-family: Open Sans; font-weight: 400; line-height: 26px; word-wrap: break-word; letter-spacing: -0.03em">‌‌, garantindo‌ gravações sem esforços com lentes telefoto.</span></div>
+            <div class="dji-rs-4-pro-52" style="left: 973px; top: 10097px; position: absolute"><span style="color: white; font-size: 20px; font-family: Open Sans; font-weight: 600; line-height: 26px; word-wrap: break-word; letter-spacing: -0.03em">Distância máx. de transmissão</span><sup style="color: white; font-size: 12.6px; font-family: Open Sans; font-weight: 600; line-height: 0; word-wrap: break-word; letter-spacing: -0.03em; vertical-align: 6.96px"> [6]</sup></div>
+            <div class="dji-rs-4-pro-45" style="width: 152px; height: 42px; left: 973px; top: 10055px; position: absolute; color: #FF4D4F; font-size: 40px; font-family: Open Sans; font-weight: 600; line-height: 52px; word-wrap: break-word">20 m</div>
+            <div class="dji-rs-4-pro-54" style="width: 270px; left: 453px; top: 12504px; position: absolute; color: white; font-size: 20px; font-family: Open Sans; font-weight: 400; line-height: 26px; word-wrap: break-word">Mais responsivo nos controles de foco, zoom e abertura.<br></div>
+            <div class="dji-rs-4-pro-55" style="width: 320px; height: 40px; left: 453px; top: 12468px; position: absolute"><span style="color: white; font-size: 20px; font-family: Open Sans; font-weight: 600; line-height: 26px; word-wrap: break-word">Aumento da velocidade do motor</span><sup style="color: white; font-size: 12.6px; font-family: Open Sans; font-weight: 600; line-height: 0; word-wrap: break-word; vertical-align: 6.96px">[5]</sup></div>
+            <div style="width: 152px; height: 42px; left: 453px; top: 12419px; position: absolute; color: #FF4D4F; font-size: 40px; font-family: Open Sans; font-weight: 600; line-height: 52px; word-wrap: break-word">30% </div>
+            <div class="dji-rs-4-pro-54" style="width: 270px; left: 870px; top: 12504px; position: absolute; color: white; font-size: 20px; font-family: Open Sans; font-weight: 400; line-height: 26px; word-wrap: break-word">Mais mainstream e versátil.</div>
+            <div class="dji-rs-4-pro-57" style="width: 139px; height: 39px; left: 870px; top: 12468px; position: absolute; color: white; font-size: 20px; font-family: Open Sans; font-weight: 600; line-height: 26px; word-wrap: break-word">Haste universal</div>
+            <div class="dji-rs-4-pro-45" style="width: 152px; height: 42px; left: 870px; top: 12422px; position: absolute; color: #FF4D4F; font-size: 40px; font-family: Open Sans; font-weight: 600; line-height: 52px; word-wrap: break-word">15 mm</div>
+            <div class="dji-rs-4-pro-59" style="width: 216px; left: 1237px; top: 12504px; position: absolute; color: white; font-size: 20px; font-family: Open Sans; font-weight: 400; line-height: 26px; word-wrap: break-word">Resposta rápida para operação perfeita.</div>
+            <div class="dji-rs-4-pro-60" style="width: 162px; height: 40px; left: 1237px; top: 12468px; position: absolute"><span style="color: white; font-size: 20px; font-family: Open Sans; font-weight: 600; line-height: 26px; word-wrap: break-word">Menor latência</span><sup style="color: white; font-size: 12.6px; font-family: Open Sans; font-weight: 600; line-height: 0; word-wrap: break-word; vertical-align: 6.96px">[7] </sup></div>
+            <div class="dji-rs-4-pro-45" style="width: 152px; height: 42px; left: 1237px; top: 12425px; position: absolute; color: #FF4D4F; font-size: 40px; font-family: Open Sans; font-weight: 600; line-height: 52px; word-wrap: break-word">10 ms</div>
+            <img class="dji-rs-4-pro-62" style="width: 1203px; height: 535px; left: 362px; top: 9470px; position: absolute" src="assets/dji-rs-4-pro-13.png" decoding="async" loading="lazy">
+            
+            
+            
+            
+            
+            
+            <img class="dji-rs-4-pro-65" style="width: 1196px; height: 616px; left: 368px; top: 10631px; position: absolute" src="assets/dji-rs-4-pro-14.png" decoding="async" loading="lazy">
+            <div class="dji-rs-4-pro-37" style="width: 1203px; height: 667px; left: 364px; top: 10646px; position: absolute; background: linear-gradient(180deg, rgba(0, 0, 0, 0) 55%, black 87%)">
+            </div>
+            <div class="dji-rs-4-pro-66" style="width: 640px; left: 875px; top: 11266px; position: absolute"><span style="color: white; font-size: 20px; font-family: Open Sans; font-weight: 400; line-height: 26px; word-wrap: break-word">Aproveitando o novo Focus Pro LiDAR </span><sup style="color: white; font-size: 12.6px; font-family: Open Sans; font-weight: 400; line-height: 0; word-wrap: break-word; vertical-align: 6.96px">[3]</sup><span style="color: white; font-size: 20px; font-family: Open Sans; font-weight: 400; line-height: 26px; word-wrap: break-word"> e algoritmos de IA, o ActiveTrack Pro de última geração permite que o gimbal de três eixos do DJI RS 4 Pro rastreie o alvo com firmeza. Mesmo que esteja parcialmente encoberto, ele pode ser rapidamente reposicionado e manter o foco.<br>
+                <br>
+              </span><span style="color: white; font-size: 20px; font-family: Open Sans; font-weight: 600; line-height: 26px; word-wrap: break-word">O ActiveTrack Pro também apresenta excelente desempenho de reconhecimento e rastreamento em cenários que envolvem vários alvos ou quando ele está distante.</span></div>
+            <div class="dji-rs-4-pro-67" style="left: 458px; top: 11294px; position: absolute; color: #FF4D4F; font-size: 48px; font-family: Open Sans; font-weight: 600; line-height: 52.80px; word-wrap: break-word">ActiveTrack Pro</div>
+            <div class="dji-rs-4-pro-68" style="left: 458px; top: 11266px; position: absolute; color: white; font-size: 20px; font-family: Open Sans; font-weight: 600; line-height: 22px; word-wrap: break-word">Processador de última geração</div>
+            <div class="dji-rs-4-pro-69" style="width: 518px; left: 872px; top: 12276px; position: absolute; color: white; font-size: 20px; font-family: Open Sans; font-weight: 400; line-height: 26px; word-wrap: break-word">‌O desempenho aprimorado do motor oferece um controle ainda mais preciso, proporcionando uma linguagem cinematográfica cada vez mais versátil.</div>
+            <div class="dji-rs-4-pro-67" style="left: 457px; top: 12293px; position: absolute; color: #FF4D4F; font-size: 48px; font-family: Open Sans; font-weight: 600; line-height: 52.80px; word-wrap: break-word">DJI Focus Pro<br></div>
+            <div class="dji-rs-4-pro-68" style="left: 457px; top: 12265px; position: absolute; color: white; font-size: 20px; font-family: Open Sans; font-weight: 600; line-height: 22px; word-wrap: break-word">Motor</div>
+            <div class="dji-rs-4-pro-69" style="width: 518px; left: 872px; top: 18532px; position: absolute; color: white; font-size: 20px; font-family: Open Sans; font-weight: 400; line-height: 26px; word-wrap: break-word">DJI Focus Pro fornece uma solução de controle de lente abrangente e poderosa para cineastas. Tanto as criações individuais quanto as colaborações em equipe podem acessar facilmente o foco automático LiDAR inteligente, bem como o controle multicanal de foco, abertura e zoom para domínio dinâmico de cada momento de foco.</div>
+            <div class="dji-rs-4-pro-67" style="left: 457px; top: 18549px; position: absolute; color: #FF4D4F; font-size: 48px; font-family: Open Sans; font-weight: 600; line-height: 52.80px; word-wrap: break-word">controle de foco<br></div>
+            <div class="dji-rs-4-pro-68" style="left: 457px; top: 18531px; position: absolute; color: white; font-size: 20px; font-family: Open Sans; font-weight: 600; line-height: 22px; word-wrap: break-word">Ecossistema de </div>
+            <div class="dji-rs-4-pro-75" style="left: 722px; top: 22379px; position: absolute; color: white; font-size: 48px; font-family: Open Sans; font-weight: 600; line-height: 52.80px; word-wrap: break-word">Soluções profissionais</div>
+            <div class="dji-rs-4-pro-76" style="width: 791px; left: 564px; top: 22445px; position: absolute; text-align: center"><span style="color: white; font-size: 20px; font-family: Open Sans; font-weight: 400; line-height: 26px; word-wrap: break-word">DJI RS 4 Pro oferece suporte a várias configurações portáteis, incluindo configurações de pasta, alça dupla e montagem em anel. </span><sup style="color: white; font-size: 12.6px; font-family: Open Sans; font-weight: 400; line-height: 0; word-wrap: break-word; vertical-align: 6.96px">[12]</sup><span style="color: white; font-size: 20px; font-family: Open Sans; font-weight: 400; line-height: 26px; word-wrap: break-word"> Além disso, ele pode usar o protocolo DJI RS SDK para estabelecer soluções com suportes para carro, lanças, Steadicam, câmeras de cabo e controles deslizantes‌ </span><sup style="color: white; font-size: 12.6px; font-family: Open Sans; font-weight: 400; line-height: 0; word-wrap: break-word; vertical-align: 6.96px">[12]</sup><span style="color: white; font-size: 20px; font-family: Open Sans; font-weight: 400; line-height: 26px; word-wrap: break-word">‌ atendendo às necessidades criativas de cenários completos.</span></div>
+            <div class="dji-rs-4-pro-77" style="width: 497px; left: 1033px; top: 12747px; position: absolute"><span style="color: white; font-size: 20px; font-family: Open Sans; font-weight: 400; line-height: 26px; word-wrap: break-word">O DJI RS 4 Pro possui um novo interruptor que permite controlar o movimento do estabilizador ou do zoom da lente direto no joystick. No Modo de Controle de Zoom, cinegrafistas podem optar entre o zoom motorizado para lentes PZ com imagem nítida </span><sup style="color: white; font-size: 12.6px; font-family: Open Sans; font-weight: 400; line-height: 0; word-wrap: break-word; vertical-align: 6.96px">[8]  </sup><span style="color: white; font-size: 20px; font-family: Open Sans; font-weight: 400; line-height: 26px; word-wrap: break-word">e o zoom do motor de foco externo.<br>
+                <br>Quando combinado a dois motores Focus Pro </span><sup style="color: white; font-size: 12.6px; font-family: Open Sans; font-weight: 400; line-height: 0; word-wrap: break-word; vertical-align: 6.96px">[4]</sup><span style="color: white; font-size: 20px; font-family: Open Sans; font-weight: 400; line-height: 26px; word-wrap: break-word">, o DJI RS 4 Pro permite que cinegrafistas ajustem o zoom da lente e controlem o foco com precisão por meio do interruptor de forma simples e estável.</span></div>
+              <div class="dji-rs-4-pro-67" style="left: 1033px; top: 12669px; position: absolute; color: #FF4D4F; font-size: 48px; font-family: Open Sans; font-weight: 600; line-height: 52.80px; word-wrap: break-word">alta eficiência</div>
+              <div class="dji-rs-4-pro-68" style="left: 1033px; top: 12647px; position: absolute; color: white; font-size: 20px; font-family: Open Sans; font-weight: 600; line-height: 22px; word-wrap: break-word">Controle de lente de</div>
+              <div class="dji-rs-4-pro-8" style="width: 1203px; height: 203px; left: 358px; top: 8252px; position: absolute; background: black; border-radius: 36px">
+              </div>
+              <div class="dji-rs-4-pro-pill" aria-hidden="true" style="width: 1203px; height: 250px; left: 358px; top: 8252px; position: absolute; overflow: hidden; border-radius: 36px"><div class="dji-rs-4-pro-10" style="width: 486.08px; height: 275px; left: 369.14px; top: 7px; position: absolute; opacity: 0.80; background: linear-gradient(180deg, rgba(255, 77, 79, 0) 1%, rgba(0, 0, 0, 0.30) 100%); border-radius: 50%; filter: blur(30.81px)">
+              </div><div class="dji-rs-4-pro-13" style="width: 246.98px; height: 753.01px; left: 257.18px; top: 335.21px; position: absolute; transform: rotate(-103deg); transform-origin: top left; opacity: 0.80; background: rgba(222, 90, 111, 0.05); box-shadow: -18.439537048339844px 18.439537048339844px 46.621952056884766px -45.11801528930664px rgba(68, 68, 68, 0.22) inset; border-radius: 50%; filter: blur(6.38px); backdrop-filter: blur(38.12px)">
+              </div><div class="dji-rs-4-pro-11" style="width: 1132.83px; height: 130px; left: 23.39px; top: 185px; position: absolute; background: linear-gradient(180deg, rgba(0, 0, 0, 0) 0%, black 100%)">
+              </div></div>
+              
+              
+              
+              <div class="dji-rs-4-pro-80" style="width: 666.07px; left: 626.46px; top: 8345px; position: absolute; text-align: center; justify-content: center; display: flex; flex-direction: column; color: transparent; font-size: 100px; font-family: Open Sans; font-weight: 600; line-height: 60px; word-wrap: break-word; padding-top: 25px; background: linear-gradient(180deg, #F64C32 29.41%, #400303 100%); -webkit-background-clip: text; background-clip: text; filter: drop-shadow(0px 4px 2px rgba(0, 0, 0, 0.25)); white-space: nowrap"><span class="lamina-text-block" style="display: block"><sup style="font-size: 63px; line-height: 0; vertical-align: 34.8px">Mestre da versatilidade</sup></span></div>
+              <div class="dji-rs-4-pro-81" style="width: 249.14px; left: 827.81px; top: 8298px; position: absolute; color: rgba(255, 255, 255, 0.60); font-size: 24px; font-family: Open Sans; font-weight: 400; line-height: 48px; word-wrap: break-word">Gravações profissionais</div>
+              <div class="dji-rs-4-pro-8" style="width: 1203px; height: 203px; left: 358px; top: 16635px; position: absolute; background: black; border-radius: 36px">
+              </div>
+              <div class="dji-rs-4-pro-pill" aria-hidden="true" style="width: 1203px; height: 250px; left: 358px; top: 16635px; position: absolute; overflow: hidden; border-radius: 36px"><div class="dji-rs-4-pro-10" style="width: 486.08px; height: 275px; left: 369.14px; top: 7px; position: absolute; opacity: 0.80; background: linear-gradient(180deg, rgba(255, 77, 79, 0) 1%, rgba(0, 0, 0, 0.30) 100%); border-radius: 50%; filter: blur(30.81px)">
+              </div><div class="dji-rs-4-pro-13" style="width: 208.82px; height: 984.38px; left: 144.08px; top: 341.67px; position: absolute; transform: rotate(-103deg); transform-origin: top left; opacity: 0.80; background: rgba(222, 90, 111, 0.05); box-shadow: -18.439537048339844px 18.439537048339844px 46.621952056884766px -45.11801528930664px rgba(68, 68, 68, 0.22) inset; border-radius: 50%; filter: blur(6.38px); backdrop-filter: blur(38.12px)">
+              </div><div class="dji-rs-4-pro-11" style="width: 1132.83px; height: 130px; left: 23.39px; top: 185px; position: absolute; background: linear-gradient(180deg, rgba(0, 0, 0, 0) 0%, black 100%)">
+              </div></div>
+              
+              
+              
+              <div class="dji-rs-4-pro-82" style="left: 520.46px; top: 16728px; position: absolute; text-align: center; justify-content: center; display: flex; flex-direction: column; color: transparent; font-size: 100px; font-family: Open Sans; font-weight: 600; line-height: 60px; word-wrap: break-word; padding-top: 25px; background: linear-gradient(180deg, #F64C32 29.41%, #400303 100%); -webkit-background-clip: text; background-clip: text; filter: drop-shadow(0px 4px 2px rgba(0, 0, 0, 0.25)); white-space: nowrap"><span class="lamina-text-block" style="display: block"><sup style="font-size: 63px; line-height: 0; vertical-align: 34.8px">Duração prolongada da bateria </sup></span></div>
+              <div class="dji-rs-4-pro-15" style="left: 826px; top: 16681px; position: absolute; color: rgba(255, 255, 255, 0.60); font-size: 24px; font-family: Open Sans; font-weight: 400; line-height: 48px; word-wrap: break-word">Desempenho profissional</div>
+              <div class="dji-rs-4-pro-8" style="width: 1203px; height: 203px; left: 358px; top: 17610px; position: absolute; background: black; border-radius: 36px">
+              </div>
+              <div class="dji-rs-4-pro-pill" aria-hidden="true" style="width: 1203px; height: 250px; left: 358px; top: 17610px; position: absolute; overflow: hidden; border-radius: 36px"><div class="dji-rs-4-pro-10" style="width: 486.08px; height: 275px; left: 369.14px; top: 7px; position: absolute; opacity: 0.80; background: linear-gradient(180deg, rgba(255, 77, 79, 0) 1%, rgba(0, 0, 0, 0.30) 100%); border-radius: 50%; filter: blur(30.81px)">
+              </div><div data-svg-wrapper="" class="dji-rs-4-pro-52" style="left: 235.31px; top: -78.44px; position: absolute">
+                <svg width="674" height="250" viewBox="0 0 674 250" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <foreignObject x="-60.5666" y="-131.87" width="794.249" height="516.86">
+                    <div xmlns="http://www.w3.org/1999/xhtml" style="backdrop-filter:blur(38.12px);clip-path:url(#bgblur_0_15_818_clip_path);height:100%;width:100%">
+                    </div>
+                  </foreignObject>
+                  <g opacity="0.8" filter="url(#filter0_if_15_818)" data-figma-bg-blur-radius="76.2429">
+                    <path d="M293.428 -53.9518C469.017 -67.4761 630.669 2.37817 654.49 102.072C678.31 201.766 555.277 293.548 379.688 307.072C204.099 320.597 42.4465 250.742 18.6264 151.048C-5.19379 51.3543 117.839 -40.4274 293.428 -53.9518Z" fill="#DE5A6F" fill-opacity="0.05">
+                    </path>
+                  </g>
+                  <defs>
+                    <filter id="filter0_if_15_818" x="-60.5666" y="-131.87" width="794.249" height="516.86" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+                      <feFlood flood-opacity="0" result="BackgroundImageFix">
+                      </feFlood>
+                      <feBlend mode="normal" in="SourceGraphic" in2="BackgroundImageFix" result="shape">
+                      </feBlend>
+                      <feColorMatrix in="SourceAlpha" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0" result="hardAlpha">
+                      </feColorMatrix>
+                      <feOffset dx="-18.4395" dy="18.4395">
+                      </feOffset>
+                      <feGaussianBlur stdDeviation="23.311">
+                      </feGaussianBlur>
+                      <feComposite in2="hardAlpha" operator="arithmetic" k2="-1" k3="1">
+                      </feComposite>
+                      <feColorMatrix type="matrix" values="0 0 0 0 0.266667 0 0 0 0 0.266667 0 0 0 0 0.266667 0 0 0 0.22 0">
+                      </feColorMatrix>
+                      <feBlend mode="normal" in2="shape" result="effect1_innerShadow_15_818">
+                      </feBlend>
+                      <feGaussianBlur stdDeviation="6.37537" result="effect2_foregroundBlur_15_818">
+                      </feGaussianBlur>
+                    </filter>
+                    <clipPath id="bgblur_0_15_818_clip_path" transform="translate(60.5666 131.87)">
+                      <path d="M293.428 -53.9518C469.017 -67.4761 630.669 2.37817 654.49 102.072C678.31 201.766 555.277 293.548 379.688 307.072C204.099 320.597 42.4465 250.742 18.6264 151.048C-5.19379 51.3543 117.839 -40.4274 293.428 -53.9518Z">
+                      </path>
+                    </clipPath>
+                  </defs>
+                </svg>
+              </div><div class="dji-rs-4-pro-11" style="width: 1132.83px; height: 130px; left: 23.39px; top: 185px; position: absolute; background: linear-gradient(180deg, rgba(0, 0, 0, 0) 0%, black 100%)">
+              </div></div>
+              
+              
+              
+              <div class="dji-rs-4-pro-82" style="left: 652.46px; top: 17703px; position: absolute; text-align: center; justify-content: center; display: flex; flex-direction: column; color: transparent; font-size: 100px; font-family: Open Sans; font-weight: 600; line-height: 60px; word-wrap: break-word; padding-top: 25px; background: linear-gradient(180deg, #F64C32 29.41%, #400303 100%); -webkit-background-clip: text; background-clip: text; filter: drop-shadow(0px 4px 2px rgba(0, 0, 0, 0.25)); white-space: nowrap"><span class="lamina-text-block" style="display: block"><sup style="font-size: 63px; line-height: 0; vertical-align: 34.8px">Escalação aprimorada</sup></span></div>
+              <div class="dji-rs-4-pro-15" style="left: 826px; top: 17656px; position: absolute; color: rgba(255, 255, 255, 0.60); font-size: 24px; font-family: Open Sans; font-weight: 400; line-height: 48px; word-wrap: break-word">Ecossistema profissional</div>
+              <img class="dji-rs-4-pro-65" style="width: 1183px; height: 661.88px; left: 371px; top: 11580px; position: absolute" src="assets/dji-rs-4-pro-15.png" decoding="async" loading="lazy">
+              <div class="dji-rs-4-pro-37" style="width: 1203px; height: 667px; left: 361px; top: 11575px; position: absolute; background: linear-gradient(180deg, rgba(0, 0, 0, 0) 0%, black 100%)">
+              </div>
+              <div class="dji-rs-4-pro-86" style="left: 582px; top: 11997px; position: absolute; text-align: center; color: white; font-size: 48px; font-family: Open Sans; font-weight: 600; line-height: 52.80px; word-wrap: break-word">Motores duplos de foco<br>e zoom para desempenho elevado</div>
+              <img class="dji-rs-4-pro-65" style="width: 1203px; height: 674px; left: 362px; top: 13139px; position: absolute" src="assets/dji-rs-4-pro-16.png" decoding="async" loading="lazy">
+              <div class="dji-rs-4-pro-6" style="width: 1203px; height: 686px; left: 362px; top: 13139px; position: absolute; background: linear-gradient(180deg, rgba(0, 0, 0, 0) 43%, black 100%)">
+              </div>
+              <div class="dji-rs-4-pro-87" style="width: 538px; left: 694px; top: 13482px; position: absolute; text-align: center; color: white; font-size: 42px; font-family: Open Sans; font-weight: 600; line-height: 46.20px; word-wrap: break-word">Sistema de controle remoto<br>para colaboração profissional</div>
+              <img class="dji-rs-4-pro-65" style="width: 1203px; height: 674px; left: 362px; top: 17813px; position: absolute" src="assets/dji-rs-4-pro-17.png" decoding="async" loading="lazy">
+              <div class="dji-rs-4-pro-6" style="width: 1203px; height: 686px; left: 362px; top: 17813px; position: absolute; background: linear-gradient(180deg, rgba(0, 0, 0, 0) 43%, black 100%)">
+              </div>
+              <img class="dji-rs-4-pro-65" style="width: 1203px; height: 552px; left: 359px; top: 14852px; position: absolute" src="assets/dji-rs-4-pro-18.png" decoding="async" loading="lazy">
+              <div class="dji-rs-4-pro-88" style="width: 681px; left: 452px; top: 15464px; position: absolute"><span style="color: rgba(255, 255, 255, 0.60); font-size: 20px; font-family: Open Sans; font-weight: 600; line-height: 26px; word-wrap: break-word">Em gravações colaborativas em equipe, o operador do estabilizador pode controlar o DJI RS 4 Pro por meio de dispositivos, como DJI Master Wheels, DJI Ronin 4D Hand Grips e DJI High-Bright Remote Monitor.</span><sup style="color: rgba(255, 255, 255, 0.60); font-size: 12.6px; font-family: Open Sans; font-weight: 600; line-height: 0; word-wrap: break-word; vertical-align: 6.96px">[3]‌</sup><span style="color: rgba(255, 255, 255, 0.60); font-size: 20px; font-family: Open Sans; font-weight: 600; line-height: 26px; word-wrap: break-word"> O operador de foco também pode ativar o formato de ondas LiDAR no monitor remoto de alto brilho para assistência de foco inteligente</span><sup style="color: rgba(255, 255, 255, 0.60); font-size: 12.6px; font-family: Open Sans; font-weight: 600; line-height: 0; word-wrap: break-word; vertical-align: 6.96px">‌[9]</sup><span style="color: rgba(255, 255, 255, 0.60); font-size: 20px; font-family: Open Sans; font-weight: 600; line-height: 26px; word-wrap: break-word">‌, permitindo um controle mais preciso com a unidade portátil Focus Pro.<br>
+                </span></div>
+              <img class="dji-rs-4-pro-89" style="width: 611px; height: 410.15px; left: 362px; top: 12642px; position: absolute; border-radius: 15px" src="assets/dji-rs-4-pro-19.png" decoding="async" loading="lazy">
+              <div class="dji-rs-4-pro-90" style="width: 472px; height: 128px; left: 455px; top: 13993px; position: absolute"><span style="color: white; font-size: 20px; font-family: Open Sans; font-weight: 400; line-height: 26px; word-wrap: break-word">O DJI Focus Pro inaugura a inovadora tecnologia de foco automático LiDAR e apresenta uma unidade de controle manual de amortecimento magnético de alta precisão: a unidade portátil Focus Pro </span><sup style="color: white; font-size: 12.6px; font-family: Open Sans; font-weight: 400; line-height: 0; word-wrap: break-word; vertical-align: 6.96px">[3].</sup></div>
+              <div class="dji-rs-4-pro-91" style="left: 455px; top: 13927px; position: absolute; color: white; font-size: 36px; font-family: Open Sans; font-weight: 600; line-height: 43.20px; word-wrap: break-word">Unidade portátil DJI Focus Pro</div>
+              <div class="dji-rs-4-pro-92" style="width: 378px; left: 457px; top: 14403px; position: absolute; color: white; font-size: 20px; font-family: Open Sans; font-weight: 400; line-height: 26px; word-wrap: break-word">Suporta controle FIZ, dominando o poder de foco, íris e zoom com facilidade.</div>
+              <div class="dji-rs-4-pro-93" style="width: 320px; height: 40px; left: 457px; top: 14347px; position: absolute; color: white; font-size: 20px; font-family: Open Sans; font-weight: 600; line-height: 26px; word-wrap: break-word">Canais de controle</div>
+              <div class="dji-rs-4-pro-45" style="width: 152px; height: 42px; left: 457px; top: 14298px; position: absolute; color: #FF4D4F; font-size: 40px; font-family: Open Sans; font-weight: 600; line-height: 52px; word-wrap: break-word">FIZ</div>
+              <div class="dji-rs-4-pro-95" style="width: 350px; left: 977px; top: 14403px; position: absolute; color: white; font-size: 20px; font-family: Open Sans; font-weight: 400; line-height: 26px; word-wrap: break-word">‌Suporta filmagens em veículos e tomadas únicas a longa distância.</div>
+              <div class="dji-rs-4-pro-96" style="left: 977px; top: 14350px; position: absolute; justify-content: center; display: flex; flex-direction: column; color: white; font-size: 20px; font-family: Open Sans; font-weight: 600; line-height: 26px; word-wrap: break-word">Distância de comunicação</div>
+              <div class="dji-rs-4-pro-45" style="width: 152px; height: 42px; left: 977px; top: 14301px; position: absolute; color: #FF4D4F; font-size: 40px; font-family: Open Sans; font-weight: 600; line-height: 52px; word-wrap: break-word">160 m</div>
+              <div class="dji-rs-4-pro-92" style="width: 378px; left: 457px; top: 14608px; position: absolute; color: white; font-size: 20px; font-family: Open Sans; font-weight: 400; line-height: 26px; word-wrap: break-word">Fornece feedback tátil de retorno elástico para pontos finais, facilitando um foco mais preciso em um caminho fixo ou em dois assuntos em posições estáticas.</div>
+              <div class="dji-rs-4-pro-93" style="width: 320px; height: 40px; left: 457px; top: 14553px; position: absolute; color: white; font-size: 20px; font-family: Open Sans; font-weight: 600; line-height: 26px; word-wrap: break-word">Marcação eletrônica</div>
+              <div class="dji-rs-4-pro-99" style="left: 457px; top: 14504px; position: absolute; color: #FF4D4F; font-size: 40px; font-family: Open Sans; font-weight: 600; line-height: 52px; word-wrap: break-word">Pontos A-B</div>
+              <div class="dji-rs-4-pro-100" style="width: 480px; left: 977px; top: 14639px; position: absolute"><span style="color: white; font-size: 20px; font-family: Open Sans; font-weight: 400; line-height: 26px; word-wrap: break-word">Permite iniciar ou parar remotamente a gravação da câmera </span><sup style="color: white; font-size: 12.6px; font-family: Open Sans; font-weight: 400; line-height: 0; word-wrap: break-word; vertical-align: 6.96px">[8]</sup><span style="color: white; font-size: 20px; font-family: Open Sans; font-weight: 400; line-height: 26px; word-wrap: break-word">,‌ melhorando a eficiência da filmagem com câmeras de cabo, jibs e outros suportes.</span></div>
+              <div class="dji-rs-4-pro-96" style="left: 977px; top: 14596px; position: absolute; justify-content: center; display: flex; flex-direction: column; color: white; font-size: 20px; font-family: Open Sans; font-weight: 600; line-height: 26px; word-wrap: break-word">Funcionalidade bluetooth</div>
+              <div class="dji-rs-4-pro-102" style="left: 977px; top: 14507px; position: absolute; color: #FF4D4F; font-size: 40px; font-family: Open Sans; font-weight: 600; line-height: 38.40px; word-wrap: break-word">Iniciar/interromper <br>a gravação</div>
+              <div data-select="1" class="dji-rs-4-pro-103 dji-rs-4-pro-bt" style="width: 1203px; height: 740px; left: 362px; top: 15811px; position: absolute" data-lamina-tab-layout="desktop-tab-1" data-lamina-tab-selected="0">
+                
+                <img class="dji-rs-4-pro-105 lamina-tab-media" style="width: 1203px; height: 534.67px; left: 0px; top: 0px; position: absolute" src="assets/dji-rs-4-pro-bt-1.jpg" decoding="async" loading="lazy" alt="" data-lamina-tab-media="desktop-tab-1" data-lamina-tab-media-index="0">
+                <img class="dji-rs-4-pro-105 lamina-tab-media" style="width: 1203px; height: 534.67px; left: 0px; top: 0px; position: absolute" src="assets/dji-rs-4-pro-bt-2.jpg" decoding="async" loading="lazy" alt="" data-lamina-tab-media="desktop-tab-1" data-lamina-tab-media-index="1" hidden="hidden">
+                <img class="dji-rs-4-pro-105 lamina-tab-media" style="width: 1203px; height: 534.67px; left: 0px; top: 0px; position: absolute" src="assets/dji-rs-4-pro-bt-3.jpg" decoding="async" loading="lazy" alt="" data-lamina-tab-media="desktop-tab-1" data-lamina-tab-media-index="2" hidden="hidden">
+                <div class="dji-rs-4-pro-24 lamina-tab-list" style="height: 44.28px; left: -3.07px; top: 558.89px; position: absolute; border-bottom: 1.67px rgba(255, 255, 255, 0.30) solid; justify-content: center; align-items: center; gap: 66.83px; display: inline-flex" data-lamina-tab-list="desktop-tab-1" role="tablist">
+                  <div class="dji-rs-4-pro-108 lamina-tab-trigger" style="padding-left: 12.53px; padding-right: 12.53px; padding-top: 8.35px; padding-bottom: 8.35px; justify-content: center; align-items: center; gap: 8.35px; display: flex" data-lamina-tab-trigger="0" role="tab" aria-selected="true" tabindex="0">
+                    <div class="dji-rs-4-pro-109" style="text-align: center; color: white; font-size: 20.05px; font-family: Open Sans; font-weight: 400; word-wrap: break-word">Conectividade bluetooth, controle sem fio</div>
+                  </div>
+                  <div class="dji-rs-4-pro-108 lamina-tab-trigger" style="padding: 8.35px; justify-content: center; align-items: center; gap: 8.35px; display: flex" data-lamina-tab-trigger="1" role="tab" aria-selected="false" tabindex="-1">
+                    <div class="dji-rs-4-pro-109" style="text-align: center; color: rgba(255, 255, 255, 0.50); font-size: 20.05px; font-family: Open Sans; font-weight: 400; word-wrap: break-word">Personalização da função do acionador</div>
+                  </div>
+                  <div class="dji-rs-4-pro-108 lamina-tab-trigger" style="padding: 8.35px; justify-content: center; align-items: center; gap: 8.35px; display: flex" data-lamina-tab-trigger="2" role="tab" aria-selected="false" tabindex="-1">
+                    <div class="dji-rs-4-pro-109" style="text-align: center; color: rgba(255, 255, 255, 0.50); font-size: 20.05px; font-family: Open Sans; font-weight: 400; word-wrap: break-word">Interruptor de modo do estabilizador</div>
+                  </div>
+                </div>
+                <div class="dji-rs-4-pro-110 lamina-tab-panel" style="width: 568.92px; height: 106.93px; left: 317.96px; top: 629.90px; position: absolute; text-align: center" data-lamina-tab-panel="0"><span style="color: rgba(255, 255, 255, 0.60); font-size: 16.71px; font-family: Open Sans; font-weight: 600; line-height: 21.72px; word-wrap: break-word">DJI RS 4 Pro adota tecnologia bluetooth de modo duplo e suporta obturador sem fio e controle de zoom sem fio. Após alternar o modo do joystick ao controle de zoom, é possível usar o joystick para executar zoom motorizado para lentes PZ, bem como zoom com imagem nítida.</span><sup style="color: rgba(255, 255, 255, 0.60); font-size: 10.53px; font-family: Open Sans; font-weight: 600; line-height: 0; word-wrap: break-word; vertical-align: 5.82px">[8]</sup></div><div class="dji-rs-4-pro-110 lamina-tab-panel" style="width: 568.92px; height: 106.93px; left: 317.96px; top: 629.90px; position: absolute; text-align: center" data-lamina-tab-panel="1" hidden="hidden"><span style="color: rgba(255, 255, 255, 0.60); font-size: 16.71px; font-family: Open Sans; font-weight: 600; line-height: 21.72px; word-wrap: break-word">A função do acionador pode ser personalizada ao modo FPV, no qual pressionar e segurar o acionador faz com que os três eixos do estabilizador sigam a direção do movimento do cabo. O que é particularmente útil ao fazer gravações rotacionais ou simular um POV.</span></div><div class="dji-rs-4-pro-110 lamina-tab-panel" style="width: 568.92px; height: 106.93px; left: 317.96px; top: 629.90px; position: absolute; text-align: center" data-lamina-tab-panel="2" hidden="hidden"><span style="color: rgba(255, 255, 255, 0.60); font-size: 16.71px; font-family: Open Sans; font-weight: 600; line-height: 21.72px; word-wrap: break-word">Alterne o interruptor do modo do Estabilizador de PF, PTF e FPV. Você também pode substituir o modo FPV pelo modo 3D Roll 360 ou modo Personalizado com base em sua preferência e requisitos de fotografia, garantindo uma operação perfeita.</span></div>
+              </div>
+              
+              <div class="dji-rs-4-pro-112" style="width: 378px; left: 453px; top: 17062px; position: absolute"><span style="color: white; font-size: 20px; font-family: Open Sans; font-weight: 400; line-height: 26px; word-wrap: break-word">Continue filmando! Com o punho de bateria de alta capacidade DJI RS BG70 ‌</span><sup style="color: white; font-size: 12.6px; font-family: Open Sans; font-weight: 400; line-height: 0; word-wrap: break-word; vertical-align: 6.96px">[3]‌</sup><span style="color: white; font-size: 20px; font-family: Open Sans; font-weight: 400; line-height: 26px; word-wrap: break-word">,estenda a autonomia da bateria do DJI RS 4 Pro para 29 horas. O cabo da bateria é capaz de carregar sua câmera e acessórios, com até 18W, por meio da porta USB-C na parte inferior.<br>
+                </span></div>
+              <div class="dji-rs-4-pro-113" style="width: 452px; left: 453px; top: 16927px; position: absolute"><span style="color: white; font-size: 40px; font-family: Open Sans; font-weight: 600; line-height: 52px; word-wrap: break-word">‌Cabo de </span><span style="color: #FF4D4F; font-size: 40px; font-family: Open Sans; font-weight: 600; line-height: 52px; word-wrap: break-word">alta capacidade </span><span style="color: white; font-size: 40px; font-family: Open Sans; font-weight: 600; line-height: 52px; word-wrap: break-word">da bateria</span></div>
+              <div class="dji-rs-4-pro-52" style="left: 454px; top: 17332px; position: absolute"><span style="color: white; font-size: 20px; font-family: Open Sans; font-weight: 600; line-height: 26px; word-wrap: break-word; letter-spacing: -0.03em">Duração da bateria </span><sup style="color: white; font-size: 12.6px; font-family: Open Sans; font-weight: 600; line-height: 0; word-wrap: break-word; letter-spacing: -0.03em; vertical-align: 6.96px">[10]</sup></div>
+              <div class="dji-rs-4-pro-99" style="left: 454px; top: 17290px; position: absolute; color: #FF4D4F; font-size: 40px; font-family: Open Sans; font-weight: 600; line-height: 52px; word-wrap: break-word">29 horas</div>
+              <div class="dji-rs-4-pro-44" style="left: 753px; top: 17424px; position: absolute; color: white; font-size: 20px; font-family: Open Sans; font-weight: 600; line-height: 26px; word-wrap: break-word; letter-spacing: -0.03em">Potência máxima de saída</div>
+              <div class="dji-rs-4-pro-45" style="width: 152px; height: 42px; left: 753px; top: 17382px; position: absolute; color: #FF4D4F; font-size: 40px; font-family: Open Sans; font-weight: 600; line-height: 52px; word-wrap: break-word">18 W</div>
+              <div class="dji-rs-4-pro-118" style="width: 240px; height: 27px; left: 454px; top: 17432px; position: absolute"><span style="color: white; font-size: 20px; font-family: Open Sans; font-weight: 600; line-height: 26px; word-wrap: break-word; letter-spacing: -0.03em">Carga completa rápida </span><sup style="color: white; font-size: 12.6px; font-family: Open Sans; font-weight: 600; line-height: 0; word-wrap: break-word; letter-spacing: -0.03em; vertical-align: 6.96px">‌[11]</sup></div>
+              <div class="dji-rs-4-pro-99" style="left: 454px; top: 17390px; position: absolute; color: #FF4D4F; font-size: 40px; font-family: Open Sans; font-weight: 600; line-height: 52px; word-wrap: break-word">2,5 horas</div>
+              <div class="dji-rs-4-pro-44" style="left: 753px; top: 17332px; position: absolute; color: white; font-size: 20px; font-family: Open Sans; font-weight: 600; line-height: 26px; word-wrap: break-word; letter-spacing: -0.03em">Carregamento rápido PD</div>
+              <div class="dji-rs-4-pro-45" style="width: 152px; height: 42px; left: 753px; top: 17290px; position: absolute; color: #FF4D4F; font-size: 40px; font-family: Open Sans; font-weight: 600; line-height: 52px; word-wrap: break-word">45 W</div>
+              <img class="dji-rs-4-pro-121" style="width: 592px; height: 527px; left: 973px; top: 19486px; position: absolute; border-radius: 15px" src="assets/dji-rs-4-pro-23.png" decoding="async" loading="lazy">
+              <div class="dji-rs-4-pro-122" style="width: 443px; height: 296px; left: 454px; top: 19651px; position: absolute"><span style="color: white; font-size: 20px; font-family: Open Sans; font-weight: 400; line-height: 28px; word-wrap: break-word">O DJI RS 4 Pro pode alimentar o Focus Pro LiDAR ‌</span><sup style="color: white; font-size: 12.6px; font-family: Open Sans; font-weight: 400; line-height: 0; word-wrap: break-word; vertical-align: 6.96px">[3]</sup><span style="color: white; font-size: 20px; font-family: Open Sans; font-weight: 400; line-height: 28px; word-wrap: break-word">‌ e o Transmissor de Vídeo DJI </span><sup style="color: white; font-size: 12.6px; font-family: Open Sans; font-weight: 400; line-height: 0; word-wrap: break-word; vertical-align: 6.96px">[3]‌  </sup><span style="color: white; font-size: 20px; font-family: Open Sans; font-weight: 400; line-height: 28px; word-wrap: break-word">simultaneamente, por meio do Focus Pro LiDAR para DJI Transmission Cable Hub‌ </span><sup style="color: white; font-size: 12.6px; font-family: Open Sans; font-weight: 400; line-height: 0; word-wrap: break-word; vertical-align: 6.96px">[3]</sup><span style="color: white; font-size: 20px; font-family: Open Sans; font-weight: 400; line-height: 28px; word-wrap: break-word">‌, eliminando a necessidade de uma montagem em V externa. <br>
+                  <br>O Transmissor de Vídeo DJI também pode ser facilmente montado diretamente na parte inferior do DJI RS 4 Pro, por meio da sapata fria, reduzindo a carga da configuração portátil.<br>
+                </span></div>
+              <div class="dji-rs-4-pro-123" style="width: 368px; left: 454px; top: 19552px; position: absolute; color: #FF4D4F; font-size: 32px; font-family: Open Sans; font-weight: 600; line-height: 38.40px; word-wrap: break-word; letter-spacing: -0.02em">Instalação integrada e fonte de alimentação</div>
+              <img class="dji-rs-4-pro-121" style="width: 592px; height: 527px; left: 973px; top: 20061px; position: absolute; border-radius: 15px" src="assets/dji-rs-4-pro-24.png" decoding="async" loading="lazy">
+              <div class="dji-rs-4-pro-125" style="width: 397px; left: 454px; top: 20304px; position: absolute"><span style="color: white; font-size: 20px; font-family: Open Sans; font-weight: 400; line-height: 28px; word-wrap: break-word">Com as alças do cabo do Ronin 4D</span><sup style="color: white; font-size: 12.6px; font-family: Open Sans; font-weight: 400; line-height: 0; word-wrap: break-word; vertical-align: 6.96px">‌ [3]</sup><span style="color: white; font-size: 20px; font-family: Open Sans; font-weight: 400; line-height: 28px; word-wrap: break-word">‌ e o monitor remoto com brilho intenso, ‌</span><sup style="color: white; font-size: 12.6px; font-family: Open Sans; font-weight: 400; line-height: 0; word-wrap: break-word; vertical-align: 6.96px">[3]</sup><span style="color: white; font-size: 20px; font-family: Open Sans; font-weight: 400; line-height: 28px; word-wrap: break-word">‌ você pode selecionar alvos de foco LiDAR, alternar entre modos de foco e habilitar o formato de ondas LiDAR.</span><sup style="color: white; font-size: 12.6px; font-family: Open Sans; font-weight: 400; line-height: 0; word-wrap: break-word; vertical-align: 6.96px">[9]</sup></div>
+              <div class="dji-rs-4-pro-126" style="width: 278px; left: 454px; top: 20205px; position: absolute; color: #FF4D4F; font-size: 32px; font-family: Open Sans; font-weight: 600; line-height: 38.40px; word-wrap: break-word; letter-spacing: -0.02em">‌Assistência de foco inteligente</div>
+              <img class="dji-rs-4-pro-121" style="width: 592px; height: 527px; left: 973px; top: 20636px; position: absolute; border-radius: 15px" src="assets/dji-rs-4-pro-25.png" decoding="async" loading="lazy">
+              <div class="dji-rs-4-pro-128" style="width: 418px; left: 454px; top: 20851px; position: absolute"><span style="color: white; font-size: 20px; font-family: Open Sans; font-weight: 400; line-height: 28px; word-wrap: break-word">Em conjunto com os punhos Ronin 4D </span><sup style="color: white; font-size: 12.6px; font-family: Open Sans; font-weight: 400; line-height: 0; word-wrap: break-word; vertical-align: 6.96px">[3]‌</sup><span style="color: white; font-size: 20px; font-family: Open Sans; font-weight: 400; line-height: 28px; word-wrap: break-word">, unidade manual Focus Pro </span><sup style="color: white; font-size: 12.6px; font-family: Open Sans; font-weight: 400; line-height: 0; word-wrap: break-word; vertical-align: 6.96px">[3]</sup><span style="color: white; font-size: 20px; font-family: Open Sans; font-weight: 400; line-height: 28px; word-wrap: break-word">‌, Master Wheels </span><sup style="color: white; font-size: 12.6px; font-family: Open Sans; font-weight: 400; line-height: 0; word-wrap: break-word; vertical-align: 6.96px">‌[3]</sup><span style="color: white; font-size: 20px; font-family: Open Sans; font-weight: 400; line-height: 28px; word-wrap: break-word">‌ e monitor remoto de alto brilho </span><sup style="color: white; font-size: 12.6px; font-family: Open Sans; font-weight: 400; line-height: 0; word-wrap: break-word; vertical-align: 6.96px">[3]</sup><span style="color: white; font-size: 20px; font-family: Open Sans; font-weight: 400; line-height: 28px; word-wrap: break-word">‌, você pode controlar remotamente o gimbal, os parâmetros de câmera e foco, alcançando um processo criativo integrado que abrange recepção, monitoramento e controle.</span></div>
+              <div class="dji-rs-4-pro-129" style="width: 411px; left: 454px; top: 20752px; position: absolute; color: #FF4D4F; font-size: 32px; font-family: Open Sans; font-weight: 600; line-height: 38.40px; word-wrap: break-word; letter-spacing: -0.02em">Controle do estabilizador/<wbr>foco/câmera</div>
+              <img class="dji-rs-4-pro-121" style="width: 592px; height: 527px; left: 973px; top: 21211px; position: absolute; border-radius: 15px" src="assets/dji-rs-4-pro-26.png" decoding="async" loading="lazy">
+              <div class="dji-rs-4-pro-130" style="width: 403px; left: 454px; top: 21399px; position: absolute"><span style="color: white; font-size: 20px; font-family: Open Sans; font-weight: 400; line-height: 28px; word-wrap: break-word">Quando o DJI RS 4 Pro é montado em suportes como uma lança, câmera de cabo ou ventosa de veículo, você pode controlar diretamente as operações do menu principal da Sony e de outras câmeras sem espelho por meio do modo Mirro Control, no monitor remoto de alto brilho </span><sup style="color: white; font-size: 12.6px; font-family: Open Sans; font-weight: 400; line-height: 0; word-wrap: break-word; vertical-align: 6.96px">[3]‌</sup><span style="color: white; font-size: 20px; font-family: Open Sans; font-weight: 400; line-height: 28px; word-wrap: break-word">, sem precisar desconectar sua câmera.<br>
+                </span></div>
+              <div class="dji-rs-4-pro-131" style="width: 464px; left: 454px; top: 21299px; position: absolute; color: #FF4D4F; font-size: 32px; font-family: Open Sans; font-weight: 600; line-height: 38.40px; word-wrap: break-word; letter-spacing: -0.02em">Modo de <br>controle espelhado</div>
+              <img class="dji-rs-4-pro-16" style="width: 556px; height: 494.95px; left: 454px; top: 21784px; position: absolute; border-radius: 14.09px" src="assets/dji-rs-4-pro-27.png" decoding="async" loading="lazy">
+              <div class="dji-rs-4-pro-130" style="width: 403px; left: 1073px; top: 21941px; position: absolute"><span style="color: white; font-size: 20px; font-family: Open Sans; font-weight: 400; line-height: 28px; word-wrap: break-word">Tanto cinegrafistas solo quanto pequenas equipes podem utilizar o Transmissor de imagens do Ronin </span><sup style="color: white; font-size: 12.6px; font-family: Open Sans; font-weight: 400; line-height: 0; word-wrap: break-word; vertical-align: 6.96px">[3] </sup><span style="color: white; font-size: 20px; font-family: Open Sans; font-weight: 400; line-height: 28px; word-wrap: break-word">para transmissões ao vivo de alta definição, controle remoto do estabilizador e da câmera, ActiveTrack 4.0, Force Mobile e muitos outros recursos, alcançando uma experiência de gravação integrada com capacidades de monitoramento e controle.<br>
+                </span></div>
+              <div class="dji-rs-4-pro-133" style="width: 464px; left: 1073px; top: 21841px; position: absolute"><span style="color: white; font-size: 32px; font-family: Open Sans; font-weight: 600; line-height: 38.40px; word-wrap: break-word; letter-spacing: -0.02em">Compatível com o </span><span style="color: #FF4D4F; font-size: 32px; font-family: Open Sans; font-weight: 600; line-height: 38.40px; word-wrap: break-word; letter-spacing: -0.02em">Transmissor de imagens (DJI Ronin)</span></div>
+              <div class="dji-rs-4-pro-134" style="left: 616px; top: 19369px; position: absolute; text-align: center; justify-content: center; display: flex; flex-direction: column"><span class="lamina-text-block" style="display: block; font-size: 64px; line-height: 38.40px"><sup style="color: white; font-size: 40.32px; font-family: Open Sans; font-weight: 600; line-height: 0; word-wrap: break-word; vertical-align: 22.27px">Compatibilidade com a</sup><sup style="color: #FF4D4F; font-size: 40.32px; font-family: Open Sans; font-weight: 600; line-height: 0; word-wrap: break-word; vertical-align: 22.27px"> DJI Transmission</sup></span></div>
+              
+              <div class="dji-rs-4-pro-146" style="width: 1920px; height: 663px; left: 0px; top: 22733px; position: absolute; background: #2D2D2C; overflow: hidden">
+                <div class="dji-rs-4-pro-147" style="width: 749px; left: 362px; top: 105px; position: absolute; justify-content: center; display: flex; flex-direction: column; color: white; font-size: 40px; font-family: Open Sans; font-weight: 600; line-height: 48px; word-wrap: break-word; letter-spacing: -0.02em">DJI Brasil agora tem seu canal oficial para a compra dos seus produtos.</div>
+                <div class="dji-rs-4-pro-148" style="width: 668px; left: 362px; top: 247px; position: absolute; justify-content: center; display: flex; flex-direction: column; color: white; font-size: 24px; font-family: Open Sans; font-weight: 400; word-wrap: break-word; letter-spacing: -0.02em"><span class="lamina-text-block" style="display: block">Este é o canal oficial da DJI no Brasil.<br><br>Comprando aqui, no site oficial, você tem a segurança de receber um produto original, regulamentado, certificado pelas agências nacionais competentes e ainda fica 100% protegido pela nossa garantia e assistência.<br><br>ATENÇÃO: não nos responsabilizamos por produtos adquiridos em outros canais que não os oficiais.</span></div>
+                  <img class="dji-rs-4-pro-149" style="width: 868px; height: 663px; left: 1052px; top: 0px; position: absolute" src="assets/dji-rs-4-pro-33.png" decoding="async" loading="lazy">
+                </div>
+                <img class="dji-rs-4-pro-150" style="width: 1204.13px; height: 535.17px; left: 359.88px; top: 18727px; position: absolute; border-radius: 15px" src="assets/dji-rs-4-pro-34.png" decoding="async" loading="lazy">
+                <div class="dji-rs-4-pro-151" style="width: 1196px; height: 491px; left: 369px; top: 111px; position: absolute; overflow: hidden; border-radius: 10px">
+                  <div class="dji-rs-4-pro-152" style="width: 1196px; height: 491px; left: 0px; top: 0px; position: absolute; background: #869DB4; border-radius: 10px">
+                  </div>
+                  <img class="dji-rs-4-pro-153" style="width: 1196px; height: 491px; left: 0px; top: 0px; position: absolute" src="assets/dji-rs-4-pro-35.png" decoding="async" loading="lazy">
+                  <div class="dji-rs-4-pro-154" style="width: 809px; height: 491px; left: 0px; top: 0px; position: absolute; background: linear-gradient(90deg, rgba(0, 0, 0, 0.90) 0%, rgba(0, 0, 0, 0) 100%); border-radius: 10px">
+                  </div>
+                  <div class="dji-rs-4-pro-155" style="width: 387px; height: 44px; left: 101px; top: 273px; position: absolute; color: white; font-size: 36px; font-family: Open Sans; font-weight: 600; line-height: 43.20px; word-wrap: break-word; letter-spacing: -0.02em">Vá além</div>
+                  <div class="dji-rs-4-pro-156" style="left: 101px; top: 203px; position: absolute; justify-content: center; display: flex; flex-direction: column"><span class="lamina-text-block" style="display: block; white-space: nowrap; font-size: 87.13px; line-height: 40.84px"><span style="color: white; font-size: 87.13px; font-family: Dji-Demi; font-weight: 400; line-height: 40.84px; word-wrap: break-word; letter-spacing: -0.02em">DJI RS4 </span><span style="color: white; font-size: 87.13px; font-family: Dji-Light; font-weight: 400; line-height: 40.84px; word-wrap: break-word; letter-spacing: -0.02em">PRO</span></span></div>
+                </div>
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+              
+        <div class="dji-rs-4-pro-box" data-lamina-tab-layout="desktop-tab-2" data-lamina-tab-selected="0">
+          <div class="dji-rs-4-pro-box-heading">Na caixa:</div>
+          <div class="dji-rs-4-pro-box-tabs">
+            <div class="dji-rs-4-pro-box-tablist lamina-tab-list" data-lamina-tab-list="desktop-tab-2" role="tablist">
+              <div class="dji-rs-4-pro-box-tab lamina-tab-trigger" data-lamina-tab-trigger="0" role="tab" aria-selected="true" tabindex="0"><span>Standard</span></div>
+              <div class="dji-rs-4-pro-box-tab lamina-tab-trigger" data-lamina-tab-trigger="1" role="tab" aria-selected="false" tabindex="-1"><span>Combo</span></div>
+            </div>
+          </div>
+          <div class="dji-rs-4-pro-box-panel lamina-tab-panel" data-lamina-tab-panel="0">
+            <div class="dji-rs-4-pro-box-title">Estabilizador DJI RS 4 Pro Standard BR</div>
+            <div class="dji-rs-4-pro-box-grid">
+            <div class="dji-rs-4-pro-box-item">
+              <div class="dji-rs-4-pro-box-card"><img src="assets/dji-rs-4-pro-box-estabilizador.png" alt="Estabilizador DJI RS 4 Pro" decoding="async" loading="lazy"></div>
+              <div class="dji-rs-4-pro-box-label">1x Estabilizador<br>DJI RS 4 Pro</div>
+            </div>
+            <div class="dji-rs-4-pro-box-item">
+              <div class="dji-rs-4-pro-box-card"><img src="assets/dji-rs-4-pro-box-punho.png" alt="Punho do estabilizador" decoding="async" loading="lazy"></div>
+              <div class="dji-rs-4-pro-box-label">1x Punho<br>do estabilizador</div>
+            </div>
+            <div class="dji-rs-4-pro-box-item">
+              <div class="dji-rs-4-pro-box-card"><img src="assets/dji-rs-4-pro-box-base.png" alt="Base de liberação rápida" decoding="async" loading="lazy"></div>
+              <div class="dji-rs-4-pro-box-label">1x Base de<br>liberação rápida</div>
+            </div>
+            <div class="dji-rs-4-pro-box-item">
+              <div class="dji-rs-4-pro-box-card"><img src="assets/dji-rs-4-pro-box-suporte-lente.png" alt="Suporte de fixação da lente" decoding="async" loading="lazy"></div>
+              <div class="dji-rs-4-pro-box-label">1x Suporte de<br>fixação da lente</div>
+            </div>
+            <div class="dji-rs-4-pro-box-item">
+              <div class="dji-rs-4-pro-box-card"><img src="assets/dji-rs-4-pro-box-cabos-multicamera.png" alt="Cabos de controle multicâmeras USB-C (30 cm)" decoding="async" loading="lazy"></div>
+              <div class="dji-rs-4-pro-box-label">2x Cabos de controle<br>multicâmeras USB-C (30 cm)</div>
+            </div>
+            <div class="dji-rs-4-pro-box-item">
+              <div class="dji-rs-4-pro-box-card"><img src="assets/dji-rs-4-pro-box-cabo-40.png" alt="Cabo de carregamento USB-C (40 cm)" decoding="async" loading="lazy"></div>
+              <div class="dji-rs-4-pro-box-label">1x Cabo de carregamento<br>USB-C (40 cm)</div>
+            </div>
+            <div class="dji-rs-4-pro-box-item">
+              <div class="dji-rs-4-pro-box-card"><img src="assets/dji-rs-4-pro-box-cabo-30-standard.png" alt="Cabo de carregamento USB-C (30 cm)" decoding="async" loading="lazy"></div>
+              <div class="dji-rs-4-pro-box-label">1x Cabo de carregamento<br>USB-C (30 cm)</div>
+            </div>
+            <div class="dji-rs-4-pro-box-item">
+              <div class="dji-rs-4-pro-box-card"><img src="assets/dji-rs-4-pro-box-adesivo.png" alt="Adesivo" decoding="async" loading="lazy"></div>
+              <div class="dji-rs-4-pro-box-label">1x Adesivo</div>
+            </div>
+            <div class="dji-rs-4-pro-box-item">
+              <div class="dji-rs-4-pro-box-card"><img src="assets/dji-rs-4-pro-box-maleta.png" alt="Maleta de transporte" decoding="async" loading="lazy"></div>
+              <div class="dji-rs-4-pro-box-label">1x Maleta de transporte</div>
+            </div>
+            <div class="dji-rs-4-pro-box-item">
+              <div class="dji-rs-4-pro-box-card"><img src="assets/dji-rs-4-pro-box-alca.png" alt="Alça de suporte ajustável" decoding="async" loading="lazy"></div>
+              <div class="dji-rs-4-pro-box-label">1x Alça de<br>suporte ajustável</div>
+            </div>
+            <div class="dji-rs-4-pro-box-item">
+              <div class="dji-rs-4-pro-box-card"><img src="assets/dji-rs-4-pro-box-tripe-standard.png" alt="Tripé (metal)" decoding="async" loading="lazy"></div>
+              <div class="dji-rs-4-pro-box-label">1x Tripé (metal)</div>
+            </div>
+            </div>
+          </div>
+          <div class="dji-rs-4-pro-box-panel lamina-tab-panel" data-lamina-tab-panel="1" hidden="hidden">
+            <div class="dji-rs-4-pro-box-title">Estabilizador DJI RS 4 Pro Combo BR</div>
+            <div class="dji-rs-4-pro-box-grid">
+            <div class="dji-rs-4-pro-box-item">
+              <div class="dji-rs-4-pro-box-card"><img src="assets/dji-rs-4-pro-box-estabilizador.png" alt="Estabilizador DJI RS 4 Pro" decoding="async" loading="lazy"></div>
+              <div class="dji-rs-4-pro-box-label">1x Estabilizador<br>DJI RS 4 Pro</div>
+            </div>
+            <div class="dji-rs-4-pro-box-item">
+              <div class="dji-rs-4-pro-box-card"><img src="assets/dji-rs-4-pro-box-punho.png" alt="Punho do estabilizador" decoding="async" loading="lazy"></div>
+              <div class="dji-rs-4-pro-box-label">1x Punho<br>do estabilizador</div>
+            </div>
+            <div class="dji-rs-4-pro-box-item">
+              <div class="dji-rs-4-pro-box-card"><img src="assets/dji-rs-4-pro-box-base.png" alt="Base de liberação rápida" decoding="async" loading="lazy"></div>
+              <div class="dji-rs-4-pro-box-label">1x Base de<br>liberação rápida</div>
+            </div>
+            <div class="dji-rs-4-pro-box-item">
+              <div class="dji-rs-4-pro-box-card"><img src="assets/dji-rs-4-pro-box-tripe.png" alt="Tripé (metal)" decoding="async" loading="lazy"></div>
+              <div class="dji-rs-4-pro-box-label">1x Tripé (metal)</div>
+            </div>
+            <div class="dji-rs-4-pro-box-item">
+              <div class="dji-rs-4-pro-box-card"><img src="assets/dji-rs-4-pro-box-suporte-lente.png" alt="Suporte de fixação da lente" decoding="async" loading="lazy"></div>
+              <div class="dji-rs-4-pro-box-label">1x Suporte de<br>fixação da lente</div>
+            </div>
+            <div class="dji-rs-4-pro-box-item">
+              <div class="dji-rs-4-pro-box-card"><img src="assets/dji-rs-4-pro-box-cabos-multicamera.png" alt="Cabos de controle multicâmeras USB-C (30 cm)" decoding="async" loading="lazy"></div>
+              <div class="dji-rs-4-pro-box-label">2x Cabos de controle<br>multicâmeras USB-C (30 cm)</div>
+            </div>
+            <div class="dji-rs-4-pro-box-item">
+              <div class="dji-rs-4-pro-box-card"><img src="assets/dji-rs-4-pro-box-cabo-40.png" alt="Cabo de carregamento USB-C (40 cm)" decoding="async" loading="lazy"></div>
+              <div class="dji-rs-4-pro-box-label">1x Cabo de carregamento<br>USB-C (40 cm)</div>
+            </div>
+            <div class="dji-rs-4-pro-box-item">
+              <div class="dji-rs-4-pro-box-card"><img src="assets/dji-rs-4-pro-box-kit-parafusos.png" alt="Kit de parafusos" decoding="async" loading="lazy"></div>
+              <div class="dji-rs-4-pro-box-label">1x Kit de parafusos</div>
+            </div>
+            <div class="dji-rs-4-pro-box-item">
+              <div class="dji-rs-4-pro-box-card"><img src="assets/dji-rs-4-pro-box-maleta.png" alt="Maleta de transporte" decoding="async" loading="lazy"></div>
+              <div class="dji-rs-4-pro-box-label">1x Maleta de transporte</div>
+            </div>
+            <div class="dji-rs-4-pro-box-item">
+              <div class="dji-rs-4-pro-box-card"><img src="assets/dji-rs-4-pro-box-adesivo.png" alt="Adesivo" decoding="async" loading="lazy"></div>
+              <div class="dji-rs-4-pro-box-label">1x Adesivo</div>
+            </div>
+            <div class="dji-rs-4-pro-box-item">
+              <div class="dji-rs-4-pro-box-card"><img src="assets/dji-rs-4-pro-box-alca.png" alt="Alça de suporte ajustável" decoding="async" loading="lazy"></div>
+              <div class="dji-rs-4-pro-box-label">1x Alça de<br>suporte ajustável</div>
+            </div>
+            <div class="dji-rs-4-pro-box-item">
+              <div class="dji-rs-4-pro-box-card"><img src="assets/dji-rs-4-pro-box-cabo-20.png" alt="Cabo de carregamento USB-C (20 cm)" decoding="async" loading="lazy"></div>
+              <div class="dji-rs-4-pro-box-label">1x Cabo de carregamento<br>USB-C (20 cm)</div>
+            </div>
+            <div class="dji-rs-4-pro-box-item">
+              <div class="dji-rs-4-pro-box-card"><img src="assets/dji-rs-4-pro-box-minihdmi-minihdmi.png" alt="Cabo MiniHDMI para MiniHDMI (20 cm)" decoding="async" loading="lazy"></div>
+              <div class="dji-rs-4-pro-box-label">1x Cabo MiniHDMI para<br>MiniHDMI (20 cm)</div>
+            </div>
+            <div class="dji-rs-4-pro-box-item">
+              <div class="dji-rs-4-pro-box-card"><img src="assets/dji-rs-4-pro-box-minihdmi-hdmi.png" alt="Cabo MiniHDMI para HDMI (20 cm)" decoding="async" loading="lazy"></div>
+              <div class="dji-rs-4-pro-box-label">1x Cabo MiniHDMI para<br>HDMI (20 cm)</div>
+            </div>
+            <div class="dji-rs-4-pro-box-item">
+              <div class="dji-rs-4-pro-box-card"><img src="assets/dji-rs-4-pro-box-minihdmi-microhdmi.png" alt="Cabo MiniHDMI para MicroHDMI (20 cm)" decoding="async" loading="lazy"></div>
+              <div class="dji-rs-4-pro-box-label">1x Cabo MiniHDMI para<br>MicroHDMI (20 cm)</div>
+            </div>
+            <div class="dji-rs-4-pro-box-item">
+              <div class="dji-rs-4-pro-box-card"><img src="assets/dji-rs-4-pro-box-transmissor-ronin.png" alt="Transmissor de imagem Ronin" decoding="async" loading="lazy"></div>
+              <div class="dji-rs-4-pro-box-label">1x Transmissor de<br>imagem Ronin</div>
+            </div>
+            <div class="dji-rs-4-pro-box-item">
+              <div class="dji-rs-4-pro-box-card"><img src="assets/dji-rs-4-pro-box-motor-focus-pro.png" alt="Motor Focus Pro" decoding="async" loading="lazy"></div>
+              <div class="dji-rs-4-pro-box-label">1x Motor Focus<br>Pro</div>
+            </div>
+            <div class="dji-rs-4-pro-box-item">
+              <div class="dji-rs-4-pro-box-card"><img src="assets/dji-rs-4-pro-box-adesivo-fiz.png" alt="Adesivo FIZ" decoding="async" loading="lazy"></div>
+              <div class="dji-rs-4-pro-box-label">1x Adesivo FIZ</div>
+            </div>
+            <div class="dji-rs-4-pro-box-item">
+              <div class="dji-rs-4-pro-box-card"><img src="assets/dji-rs-4-pro-box-faixa-engrenagem.png" alt="Faixa de engrenagem de foco" decoding="async" loading="lazy"></div>
+              <div class="dji-rs-4-pro-box-label">1x Faixa de engrenagem<br>de foco</div>
+            </div>
+            <div class="dji-rs-4-pro-box-item">
+              <div class="dji-rs-4-pro-box-card"><img src="assets/dji-rs-4-pro-box-base-2.png" alt="Base de liberação rápida" decoding="async" loading="lazy"></div>
+              <div class="dji-rs-4-pro-box-label">1x Base de<br>liberação rápida</div>
+            </div>
+            <div class="dji-rs-4-pro-box-item">
+              <div class="dji-rs-4-pro-box-card"><img src="assets/dji-rs-4-pro-box-placa-inferior.png" alt="Placa inferior de liberação rápida (estendida)" decoding="async" loading="lazy"></div>
+              <div class="dji-rs-4-pro-box-label">1x Placa inferior de<br>liberação rápida<br>(estendida)</div>
+            </div>
+            <div class="dji-rs-4-pro-box-item">
+              <div class="dji-rs-4-pro-box-card"><img src="assets/dji-rs-4-pro-box-suporte-telefone.png" alt="Suporte para telefone" decoding="async" loading="lazy"></div>
+              <div class="dji-rs-4-pro-box-label">1x Suporte para telefone</div>
+            </div>
+            </div>
+          </div>
+        </div>
+        <div class="dji-rs-4-pro-notes">
+          <p>1. O estabilizador requer reequilíbrio após alternar entre disparo horizontal e vertical.</p>
+          <p>2. Comparado ao DJI RS 3 Pro.</p>
+          <p>3. Vendidos separadamente.</p>
+          <p>4. O Combo DJI RS 4 Pro inclui o DJI Focus Pro Motor. Na versão individual, o motor é vendido separadamente.</p>
+          <p>5. A melhoria de 77% nos pontos de alcance e a triplicação do alcance de foco até alvos humanos foram medidas em comparação ao sensor telemétrico DJI LiDAR (RS). O aumento de 30% na velocidade do motor foi medido em comparação ao Focus Motor (2022) (DJI RS).</p>
+          <p>6. ‌É necessário habilitar a função de exibição de zoom de 2× na tela sensível ao toque do DJI RS 4 Pro.</p>
+          <p>7. Este valor indica a latência de resposta entre a unidade manual DJI Focus Pro e o DJI Focus Pro Motor.</p>
+          <p>8. Para obter mais detalhes sobre compatibilidade de câmeras e lentes, consulte a página do produto no site oficial da DJI.</p>
+          <p>9. O formato de ondas LiDAR só estará disponível quando o DJI RS 4 Pro estiver vinculado a um Focus Pro Motor.</p>
+          <p>10. Medido em um ambiente interno de 25° C (77° F) com o cardan equilibrado em um estado nivelado e estacionário até que o nível da bateria alcance 3% (com o punho da bateria alimentando apenas o cardan).</p>
+          <p>11. Medido em um ambiente interno de 25° C (77° F).</p>
+          <p>12. A configuração das soluções de gravação mencionadas acima requer o uso de um ou mais acessórios vendidos separadamente.</p>
+        </div></div>
+            </div>
+          </div>
+          <div class="lamina-layout lamina-layout-mobile" data-lamina-fit="">
+            <div class="dji-rs-4-pro-bands" aria-hidden="true">
+              <div style="--band: 19218px; background: black"></div>
+              <div style="--band: 1009px; background: #2D2D2C"></div>
+              <div class="dji-rs-4-pro-band-box" style="background: white"></div>
+            </div>
+            <div class="dji-rs-4-pro-194" data-lamina-fit-board="428" style="width: 428px; height: auto; position: relative; background: black; overflow: hidden; padding-top: 20227px">
+              <img class="dji-rs-4-pro-3" style="width: 273.41px; height: 312px; left: 85px; top: 14484px; position: absolute; border-radius: 18.82px" src="assets/dji-rs-4-pro-55.png" decoding="async" loading="lazy">
+              <div class="dji-rs-4-pro-151" style="width: 428px; height: 491px; left: 0px; top: 0px; position: absolute; overflow: hidden; border-radius: 10px">
+                <div class="dji-rs-4-pro-152" style="width: 1196px; height: 491px; left: 0px; top: 0px; position: absolute; background: #869DB4; border-radius: 10px">
+                </div>
+                <img class="dji-rs-4-pro-124" style="width: 428px; height: 491px; left: 0px; top: 0px; position: absolute" src="assets/dji-rs-4-pro-56.png" decoding="async" loading="lazy">
+                <img class="dji-rs-4-pro-153" style="width: 428px; height: 491px; left: 0px; top: 0px; position: absolute" src="assets/dji-rs-4-pro-57.png" decoding="async" loading="lazy">
+                <div class="dji-rs-4-pro-155" style="width: 271px; height: 30.81px; left: 78px; top: 130.12px; position: absolute; text-align: center; color: white; font-size: 25.21px; font-family: Open Sans; font-weight: 600; line-height: 30.25px; word-wrap: break-word; letter-spacing: -0.02em">Vá além</div>
+                <div class="dji-rs-4-pro-134" style="left: 81px; top: 81px; position: absolute; text-align: center; justify-content: center; display: flex; flex-direction: column"><span class="lamina-text-block" style="display: block; white-space: nowrap; font-size: 48px; line-height: 28.60px"><span style="color: white; font-size: 48px; font-family: Dji-Demi; font-weight: 400; line-height: 28.60px; word-wrap: break-word; letter-spacing: -0.02em">DJI RS4 </span><span style="color: white; font-size: 48px; font-family: Dji-Book; font-weight: 400; line-height: 28.60px; word-wrap: break-word; letter-spacing: -0.02em">PRO</span></span></div>
+              </div>
+              
+              <img class="dji-rs-4-pro-5" style="width: 428px; height: 454px; left: 0px; top: 459px; position: absolute; opacity: 0.8" src="assets/dji-rs-4-pro-58.png" decoding="async" loading="lazy">
+              <div class="dji-rs-4-pro-6" style="width: 563px; height: 108px; left: -70px; top: 2758px; position: absolute; background: linear-gradient(180deg, rgba(0, 0, 0, 0) 0%, black 100%)">
+              </div>
+              <div class="dji-rs-4-pro-7" style="width: 363px; left: 30px; top: 683px; position: absolute; text-align: center; color: white; font-size: 14px; font-family: Open Sans; font-weight: 400; line-height: 18.20px; word-wrap: break-word">O DJI RS 4 Pro é um estabilizador expansível de ponta, com integração perfeita com o sistema de controle de lentes DJI Focus Pro, DJI Transmission e com um vasto ecossistema de controle. Essa sinergia traz uma solução de produção em grande escala que une estabilização, transmissão, monitoramento, foco e controle para a indústria cinematográfica e televisiva. Amplie os horizontes de possibilidades criativas, permitindo que você libere todo o seu potencial de cinegrafista.</div>
+              <div class="dji-rs-4-pro-8" style="width: 563px; height: 118.98px; left: -68px; top: 913px; position: absolute; background: black; border-radius: 17.13px">
+              </div>
+              <div class="dji-rs-4-pro-pill" aria-hidden="true" style="width: 563px; height: 118.98px; left: -68px; top: 913px; position: absolute; overflow: hidden; border-radius: 17.13px"><div class="dji-rs-4-pro-10" style="width: 353px; height: 95px; left: 110px; top: 10px; position: absolute; opacity: 0.80; background: linear-gradient(180deg, rgba(255, 77, 79, 0.50) 0%, rgba(0, 0, 0, 0.50) 100%); border-radius: 50%; filter: blur(17.62px)">
+              </div><div class="dji-rs-4-pro-13" style="width: 113.38px; height: 505.07px; left: 69.03px; top: 182.75px; position: absolute; transform: rotate(-106deg); transform-origin: top left; opacity: 0.80; background: rgba(222, 90, 111, 0.05); box-shadow: -13.420624732971191px 13.420624732971191px 33.932289123535156px -32.83769989013672px rgba(68, 68, 68, 0.22) inset; border-radius: 50%; filter: blur(4.64px); backdrop-filter: blur(27.75px)">
+              </div><div class="dji-rs-4-pro-11" style="width: 530.16px; height: 61.87px; left: 10.95px; top: 88.04px; position: absolute; background: linear-gradient(180deg, rgba(0, 0, 0, 0) 0%, black 100%)">
+              </div></div>
+              
+              
+              
+              <div class="dji-rs-4-pro-12" style="left: 81.86px; top: 931.93px; position: absolute; text-align: center; justify-content: center; display: flex; flex-direction: column; color: transparent; font-size: 48px; font-family: Open Sans; font-weight: 600; line-height: 57.60px; word-wrap: break-word; padding-top: 12px; background: linear-gradient(180deg, #F64C32 17.24%, #400303 100%); -webkit-background-clip: text; background-clip: text; filter: drop-shadow(0px 4px 2px rgba(0, 0, 0, 0.25)); white-space: nowrap"><span class="lamina-text-block" style="display: block"><sup style="font-size: 30.24px; line-height: 0; vertical-align: 16.7px">Repleto de recursos</sup></span></div>
+              <img class="dji-rs-4-pro-21" style="width: 428px; height: 309px; left: 0px; top: 1032px; position: absolute; background: linear-gradient(255deg, rgba(0, 0, 0, 0) 44%, rgba(0, 0, 0, 0.80) 76%); border-radius: 17.94px" src="assets/dji-rs-4-pro-59.png" decoding="async" loading="lazy">
+              <div class="dji-rs-4-pro-22" style="width: 320px; left: 47px; top: 1545px; position: absolute; text-align: center"><span style="color: white; font-size: 15px; font-family: Open Sans; font-weight: 700; line-height: 19.50px; word-wrap: break-word; letter-spacing: -0.02em">Equipado com braços de eixo de fibra de carbono, o DJI RS 4 Pro possui uma capacidade de carga útil de 4,5 kg, </span><span style="color: white; font-size: 15px; font-family: Open Sans; font-weight: 400; line-height: 19.50px; word-wrap: break-word; letter-spacing: -0.02em">bem como potência e torque robustos. Acomode facilmente as principais configurações de lente e câmeras sem espelho e cinematográficas.</span></div>
+              <div class="dji-rs-4-pro-23" style="left: 59px; top: 1491px; position: absolute; text-align: center; color: #FF4D4F; font-size: 34px; font-family: Open Sans; font-weight: 600; line-height: 40.80px; word-wrap: break-word">Carga útil poderosa</div>
+              <div class="dji-rs-4-pro-24" style="padding-left: 16px; padding-right: 16px; padding-top: 9px; padding-bottom: 9px; left: 24px; top: 1696px; position: absolute; background: black; overflow: hidden; border-radius: 100px; outline: 1px white solid; outline-offset: -1px; justify-content: center; align-items: center; gap: 10px; display: inline-flex">
+                <div class="dji-rs-4-pro-25" style="width: 335px; color: white; font-size: 22px; font-family: Open Sans; font-weight: 400; line-height: 15px; word-wrap: break-word"><sup style="font-size: 13.86px; line-height: 15px; vertical-align: baseline">Verifique a lista de compatibilidade de câmeras e lentes</sup></div>
+              </div>
+              <img class="dji-rs-4-pro-18" style="width: 428px; height: 518px; left: 0px; top: 1729px; position: absolute; background: linear-gradient(255deg, rgba(0, 0, 0, 0) 44%, rgba(0, 0, 0, 0.80) 76%); border-radius: 30.08px" src="assets/dji-rs-4-pro-60.png" decoding="async" loading="lazy">
+              <div class="dji-rs-4-pro-20" style="width: 357px; left: 35px; top: 2193px; position: absolute; text-align: center"><span style="color: white; font-size: 34px; font-family: Open Sans; font-weight: 600; line-height: 40.80px; word-wrap: break-word">Gravação vertical nativa da </span><span style="color: #FF4D4F; font-size: 34px; font-family: Open Sans; font-weight: 600; line-height: 40.80px; word-wrap: break-word">2ª geração</span></div>
+              <div class="dji-rs-4-pro-19" style="width: 310px; left: 59px; top: 2298px; position: absolute; text-align: center"><span style="color: white; font-size: 15px; font-family: Open Sans; font-weight: 400; line-height: 19.50px; word-wrap: break-word; letter-spacing: -0.02em">Projetado com uma placa horizontal totalmente nova, o DJI RS 4 Pro permite a segunda geração de disparo vertical nativo para maior eficiência. Basta liberar a base horizontal e fixá-la na posição vertical para alternar facilmente as gravações verticais.</span><sup style="color: white; font-size: 9.45px; font-family: Open Sans; font-weight: 400; line-height: 0; word-wrap: break-word; letter-spacing: -0.02em; vertical-align: 5.22px"> [1]</sup><span style="color: white; font-size: 15px; font-family: Open Sans; font-weight: 400; line-height: 19.50px; word-wrap: break-word; letter-spacing: -0.02em">
+                </span></div>
+              <img class="dji-rs-4-pro-18" style="width: 428px; height: 518px; left: 0px; top: 2516px; position: absolute; background: linear-gradient(255deg, rgba(0, 0, 0, 0) 44%, rgba(0, 0, 0, 0.80) 76%); border-radius: 30.08px" src="assets/dji-rs-4-pro-60.png" decoding="async" loading="lazy">
+              <img class="dji-rs-4-pro-26" style="width: 428px; height: 444px; left: 0px; top: 2536px; position: absolute" src="assets/dji-rs-4-pro-61.png" decoding="async" loading="lazy">
+              <div class="dji-rs-4-pro-28" style="width: 357px; left: 35px; top: 2482px; position: absolute; text-align: center; color: #FF4D4F; font-size: 34px; font-family: Open Sans; font-weight: 600; line-height: 40.80px; word-wrap: break-word">Estabilidade<br> de calibração</div>
+              <div class="dji-rs-4-pro-195" style="width: 310px; left: 59px; top: 2981px; position: absolute; text-align: center; color: white; font-size: 15px; font-family: Open Sans; font-weight: 400; line-height: 19.50px; word-wrap: break-word; letter-spacing: -0.02em">O eixo de rotação agora possui rolamentos duplos, facilitando ajustes. Todos os três eixos apresentam revestimento de Teflon™ com baixo coeficiente de atrito, garantindo equilíbrio suave mesmo na montagem de câmeras pesadas.<br><br>Ao trocar de câmera ou lente, um botão de ajuste fino no eixo de inclinação permite movê-la para frente ou para trás, alcançando um equilíbrio preciso em nível milimétrico. A base de rápida liberação superior possui um guia de posicionamento ajustável que evita que a câmera se solte ou desloque sozinha.<br></div>
+              <img class="dji-rs-4-pro-29" style="width: 431px; height: 431px; left: -2.50px; top: 3243px; position: absolute" src="assets/dji-rs-4-pro-62.png" decoding="async" loading="lazy">
+              <div class="dji-rs-4-pro-28" style="width: 357px; left: 35px; top: 3750px; position: absolute; text-align: center; color: #FF4D4F; font-size: 34px; font-family: Open Sans; font-weight: 600; line-height: 40.80px; word-wrap: break-word">Bloqueio automático da tela</div>
+              <div class="dji-rs-4-pro-30" style="width: 310px; left: 59px; top: 3855px; position: absolute; text-align: center; color: white; font-size: 14px; font-family: Open Sans; font-weight: 400; line-height: 18.20px; word-wrap: break-word; letter-spacing: -0.02em">A tela de OLED sensível ao toque incorpora um novo recurso de bloqueio automático, evitando toques acidentais durante a filmagem. Quando bloqueada, a tela ainda exibe os modos atuais do gimbal e do joystick com baixo brilho, reduzindo o consumo de energia.</div>
+              <img class="dji-rs-4-pro-32" style="width: 428px; height: 387px; left: 0px; top: 3992px; position: absolute" src="assets/dji-rs-4-pro-63.png" decoding="async" loading="lazy">
+              <div class="dji-rs-4-pro-28" style="width: 357px; left: 35px; top: 4435px; position: absolute; text-align: center; color: #FF4D4F; font-size: 34px; font-family: Open Sans; font-weight: 600; line-height: 40.80px; word-wrap: break-word">Travas automáticas dos eixos da 2ª geração</div>
+              <div class="dji-rs-4-pro-30" style="width: 310px; left: 59px; top: 4540px; position: absolute; text-align: center; color: white; font-size: 14px; font-family: Open Sans; font-weight: 400; line-height: 18.20px; word-wrap: break-word">Com os bloqueios de eixo automatizados de última geração, o DJI RS 4 Pro pode começar a trabalhar rapidamente ou entrar no modo de suspensão, melhorando significativamente a eficiência de gravação, transição e armazenamento. As travas dos eixos foram atualizadas de forma a reduzir os espaços, limitando ainda mais os tremores do estabilizador.<br></div>
+              <div class="dji-rs-4-pro-8" style="width: 563px; height: 118.98px; left: -68px; top: 4724px; position: absolute; background: black; border-radius: 17.13px">
+              </div>
+              <div class="dji-rs-4-pro-pill" aria-hidden="true" style="width: 563px; height: 209px; left: -68px; top: 4662px; position: absolute; overflow: hidden; border-radius: 17.13px"><div class="dji-rs-4-pro-10" style="width: 369px; height: 103px; left: 102px; top: 93px; position: absolute; opacity: 0.80; background: linear-gradient(180deg, rgba(255, 77, 79, 0.50) 0%, rgba(0, 0, 0, 0.50) 100%); border-radius: 50%; filter: blur(17.62px)">
+              </div><div class="dji-rs-4-pro-13" style="width: 113.38px; height: 505.07px; left: 69.03px; top: 244.75px; position: absolute; transform: rotate(-106deg); transform-origin: top left; opacity: 0.80; background: rgba(222, 90, 111, 0.05); box-shadow: -13.420624732971191px 13.420624732971191px 33.932289123535156px -32.83769989013672px rgba(68, 68, 68, 0.22) inset; border-radius: 50%; filter: blur(4.64px); backdrop-filter: blur(27.75px)">
+              </div><div class="dji-rs-4-pro-11" style="width: 530.16px; height: 61.87px; left: 10.95px; top: 150.04px; position: absolute; background: linear-gradient(180deg, rgba(0, 0, 0, 0) 0%, black 100%)">
+              </div></div>
+              
+              
+              
+              <div class="dji-rs-4-pro-14" style="left: 68px; top: 4758px; position: absolute; text-align: center; justify-content: center; display: flex; flex-direction: column; color: transparent; font-size: 48px; font-family: Open Sans; font-weight: 600; line-height: 28.80px; word-wrap: break-word; padding-top: 12px; background: linear-gradient(180deg, #F64C32 17.24%, #400303 100%); -webkit-background-clip: text; background-clip: text; filter: drop-shadow(0px 4px 2px rgba(0, 0, 0, 0.25)); white-space: nowrap"><span class="lamina-text-block" style="display: block"><sup style="font-size: 30.24px; line-height: 0; vertical-align: 16.7px">Excelente estabilidade,<br>padrões excepcionais</sup></span></div>
+              <div class="dji-rs-4-pro-15" style="left: 139px; top: 4716px; position: absolute; color: rgba(255, 255, 255, 0.60); font-size: 14px; font-family: Open Sans; font-weight: 400; line-height: 48px; word-wrap: break-word">Estabilização profissional</div>
+              <div class="dji-rs-4-pro-19" style="width: 310px; left: 59px; top: 5320px; position: absolute; text-align: center"><span style="color: white; font-size: 14px; font-family: Open Sans; font-weight: 700; line-height: 18.20px; word-wrap: break-word">O DJI RS 4 Pro apresenta um aumento de 20%[2] no torque do motor em três eixos, oferecendo maior redundância de energia quando balanceado.</span><span style="color: white; font-size: 14px; font-family: Open Sans; font-weight: 400; line-height: 18.20px; word-wrap: break-word"> Isso ajuda a garantir que o gimbal permaneça responsivo e preciso nos movimentos de rastreamento, mesmo com câmeras pesadas ou com vários acessórios. Além disso, fornece energia suficiente para suportar a estabilização do gimbal em vários cenários de gravação.<br>
+                </span></div>
+              <img class="dji-rs-4-pro-16" style="width: 429px; height: 429px; left: -1px; top: 4856px; position: absolute" src="assets/dji-rs-4-pro-64.png" decoding="async" loading="lazy">
+              <img class="dji-rs-4-pro-21" style="width: 428px; height: 376.15px; left: 0px; top: 5803px; position: absolute" src="assets/dji-rs-4-pro-65.png" decoding="async" loading="lazy">
+              <div class="dji-rs-4-pro-6" style="width: 1203px; height: 127px; left: -352px; top: 6071px; position: absolute; background: linear-gradient(180deg, rgba(0, 0, 0, 0) 0%, black 100%)">
+              </div>
+              <div class="dji-rs-4-pro-35" style="width: 325px; left: 41px; top: 5656px; position: absolute; text-align: center; color: white; font-size: 14px; font-family: Open Sans; font-weight: 600; line-height: 18.20px; word-wrap: break-word">O novo Modo de Suporte para Automóveis otimiza os algoritmos de estabilização do estabilizador, com base nas vibrações do veículo e nos dados de resistência ao vento, garantindo gravações mais nítidas mesmo quando capturadas em um veículo em movimento.</div>
+              <div class="dji-rs-4-pro-196" style="width: 293px; left: 63px; top: 6393px; position: absolute; text-align: center; color: white; font-size: 14px; font-family: Open Sans; font-weight: 600; line-height: 18.20px; word-wrap: break-word">O algoritmo de estabilização RS de próxima geração foi otimizado de forma abrangente para diferentes cenários de uso. ‌Ele atinge um equilíbrio superior entre a força de estabilização e a sensação tátil do movimento da câmera, proporcionando excelente desempenho e uma experiência de usuário aprimorada. <br><br>Impulsionado pelos algoritmos de estabilização da 4ª geração do RS, o DJI RS 4 Pro traz estabilidade significativamente aprimorada em gravações verticais, dominando facilmente cenas dinâmicas, como em corridas ou gravações em ângulos baixos.<br></div>
+              <div class="dji-rs-4-pro-41" style="width: 340px; left: 52px; top: 7776px; position: absolute; text-align: center"><span style="color: white; font-size: 14px; font-family: Open Sans; font-weight: 600; line-height: 18.20px; word-wrap: break-word">Quando combinado com o novo Focus Pro LiDAR</span><sup style="color: white; font-size: 8.82px; font-family: Open Sans; font-weight: 600; line-height: 0; word-wrap: break-word; vertical-align: 4.87px"> ‌[3]‌ </sup><span style="color: white; font-size: 14px; font-family: Open Sans; font-weight: 600; line-height: 18.20px; word-wrap: break-word">e o Focus Pro Motor‌ </span><sup style="color: white; font-size: 8.82px; font-family: Open Sans; font-weight: 600; line-height: 0; word-wrap: break-word; vertical-align: 4.87px">[4]‌,</sup><span style="color: white; font-size: 14px; font-family: Open Sans; font-weight: 600; line-height: 18.20px; word-wrap: break-word"> o DJI RS 4 Pro permite que os cineastas solo experimentem um foco automático LiDAR mais preciso, distante e inteligente, obtendo controle sobre a expressão cinematográfica em cenários dinâmicos de filmagem.</span></div>
+              <div class="dji-rs-4-pro-8" style="width: 563px; height: 118.98px; left: -68px; top: 7127px; position: absolute; background: black; border-radius: 17.13px">
+              </div>
+              <div class="dji-rs-4-pro-pill" aria-hidden="true" style="width: 563px; height: 118.98px; left: -68px; top: 7127px; position: absolute; overflow: hidden; border-radius: 17.13px"><div class="dji-rs-4-pro-10" style="width: 273.17px; height: 130.40px; left: 149.91px; top: 10.47px; position: absolute; opacity: 0.80; background: linear-gradient(180deg, rgba(255, 77, 79, 0.50) 0%, rgba(0, 0, 0, 0.50) 100%); border-radius: 50%; filter: blur(17.62px)">
+              </div><div class="dji-rs-4-pro-13" style="width: 113.38px; height: 505.07px; left: 69.03px; top: 182.75px; position: absolute; transform: rotate(-106deg); transform-origin: top left; opacity: 0.80; background: rgba(222, 90, 111, 0.05); box-shadow: -13.420624732971191px 13.420624732971191px 33.932289123535156px -32.83769989013672px rgba(68, 68, 68, 0.22) inset; border-radius: 50%; filter: blur(4.64px); backdrop-filter: blur(27.75px)">
+              </div><div class="dji-rs-4-pro-11" style="width: 530.16px; height: 61.87px; left: 10.95px; top: 88.04px; position: absolute; background: linear-gradient(180deg, rgba(0, 0, 0, 0) 0%, black 100%)">
+              </div></div>
+              
+              
+              
+              <div class="dji-rs-4-pro-14" style="left: 56px; top: 7176px; position: absolute; text-align: center; justify-content: center; display: flex; flex-direction: column; color: transparent; font-size: 48px; font-family: Open Sans; font-weight: 600; line-height: 28.80px; word-wrap: break-word; padding-top: 12px; background: linear-gradient(180deg, #F64C32 29.41%, #400303 100%); -webkit-background-clip: text; background-clip: text; filter: drop-shadow(0px 4px 2px rgba(0, 0, 0, 0.25)); white-space: nowrap"><span class="lamina-text-block" style="display: block"><sup style="font-size: 30.24px; line-height: 0; vertical-align: 16.7px">Mestre da versatilidade</sup></span></div>
+              <div class="dji-rs-4-pro-15" style="left: 138px; top: 7140px; position: absolute; color: rgba(255, 255, 255, 0.60); font-size: 14px; font-family: Open Sans; font-weight: 400; line-height: 48px; word-wrap: break-word">Gravações profissionais</div>
+              <div class="dji-rs-4-pro-36" style="width: 310px; height: 97px; left: 49px; top: 5559px; position: absolute; text-align: center; color: #FF4D4F; font-size: 34px; font-family: Open Sans; font-weight: 600; line-height: 37.40px; word-wrap: break-word">Modo de Suporte para Automóveis</div>
+              <div class="dji-rs-4-pro-36" style="width: 310px; height: 97px; left: 55px; top: 6237px; position: absolute; text-align: center; color: #FF4D4F; font-size: 34px; font-family: Open Sans; font-weight: 600; line-height: 37.40px; word-wrap: break-word">Algoritmos de estabilização da 4ª geração do RS</div>
+              <div class="dji-rs-4-pro-42" style="width: 347px; height: 97px; left: 40px; top: 7646px; position: absolute; text-align: center; color: white; font-size: 32px; font-family: Open Sans; font-weight: 600; line-height: 35.20px; word-wrap: break-word">Foco LiDAR inteligente para gravações confiáveis</div>
+              <img class="dji-rs-4-pro-18" style="width: 428px; height: 376.67px; left: 0px; top: 6720px; position: absolute" src="assets/dji-rs-4-pro-66.png" decoding="async" loading="lazy">
+              <div class="dji-rs-4-pro-6" style="width: 1203px; height: 127px; left: -352px; top: 7000px; position: absolute; background: linear-gradient(180deg, rgba(0, 0, 0, 0) 0%, black 100%)">
+              </div>
+              <img class="dji-rs-4-pro-40" style="width: 428px; height: 321.98px; left: 0px; top: 7259px; position: absolute" src="assets/dji-rs-4-pro-67.png" decoding="async" loading="lazy">
+              <img class="dji-rs-4-pro-62" style="width: 428px; height: 251.27px; left: 0px; top: 7914px; position: absolute" src="assets/dji-rs-4-pro-68.png" decoding="async" loading="lazy">
+              <div class="dji-rs-4-pro-6" style="width: 1203px; height: 127px; left: -352px; top: 7000px; position: absolute; background: linear-gradient(180deg, rgba(0, 0, 0, 0) 0%, black 100%)">
+              </div>
+              <div class="dji-rs-4-pro-197" style="width: 341px; left: 45px; top: 8340.13px; position: absolute"><span style="color: white; font-size: 20px; font-family: Open Sans; font-weight: 400; line-height: 26px; word-wrap: break-word; letter-spacing: -0.03em">O salto de 77% aprimora a detecção</span><sup style="color: white; font-size: 12.6px; font-family: Open Sans; font-weight: 400; line-height: 0; word-wrap: break-word; letter-spacing: -0.03em; vertical-align: 6.96px"> [5]</sup><span style="color: white; font-size: 20px; font-family: Open Sans; font-weight: 400; line-height: 26px; word-wrap: break-word; letter-spacing: -0.03em"> de bordas de objetos humanos e reduz, efetivamente, a busca de foco</span><span style="color: white; font-size: 20px; font-family: Open Sans; font-weight: 400; line-height: 26px; word-wrap: break-word; letter-spacing: -0.03em">.</span></div>
+              <div class="dji-rs-4-pro-44" style="width: 366px; left: 45px; top: 8297.13px; position: absolute; color: white; font-size: 20px; font-family: Open Sans; font-weight: 600; line-height: 26px; word-wrap: break-word; letter-spacing: -0.03em">pontos de alcance</div>
+              <div class="dji-rs-4-pro-45" style="width: 330px; height: 42px; left: 45px; top: 8255.13px; position: absolute; color: #FF4D4F; font-size: 40px; font-family: Open Sans; font-weight: 600; line-height: 52px; word-wrap: break-word">76.800<br></div>
+              <div class="dji-rs-4-pro-51" style="width: 363.41px; left: 45px; top: 8559.13px; position: absolute"><span style="color: white; font-size: 14px; font-family: Open Sans; font-weight: 400; line-height: 18.20px; word-wrap: break-word; letter-spacing: -0.03em">A distância de foco do LiDAR ao alvo humano foi prolongada em 20 metros, aproximadamente três vezes maior se comparada à geração anterior </span><sup style="color: white; font-size: 8.82px; font-family: Open Sans; font-weight: 400; line-height: 0; word-wrap: break-word; letter-spacing: -0.03em; vertical-align: 4.87px">[5]</sup><span style="color: white; font-size: 14px; font-family: Open Sans; font-weight: 400; line-height: 18.20px; word-wrap: break-word; letter-spacing: -0.03em">‌‌, garantindo‌ gravações sem esforços com lentes telefoto.</span></div>
+              <div class="dji-rs-4-pro-52" style="left: 45px; top: 8512.13px; position: absolute"><span style="color: white; font-size: 20px; font-family: Open Sans; font-weight: 600; line-height: 26px; word-wrap: break-word; letter-spacing: -0.03em">Distância máx. de transmissão</span><sup style="color: white; font-size: 12.6px; font-family: Open Sans; font-weight: 600; line-height: 0; word-wrap: break-word; letter-spacing: -0.03em; vertical-align: 6.96px"> [6]</sup></div>
+              <div class="dji-rs-4-pro-99" style="left: 45px; top: 8470.13px; position: absolute; color: #FF4D4F; font-size: 40px; font-family: Open Sans; font-weight: 600; line-height: 52px; word-wrap: break-word">20 m</div>
+              <div class="dji-rs-4-pro-49" style="width: 349px; left: 45px; top: 8752.13px; position: absolute; color: white; font-size: 14px; font-family: Open Sans; font-weight: 400; line-height: 18.20px; word-wrap: break-word; letter-spacing: -0.03em">Benéfico para composições de borda e close-ups, proporcionando um espaço de enquadramento maior.<br></div>
+              <div class="dji-rs-4-pro-44" style="left: 45px; top: 8709.13px; position: absolute; color: white; font-size: 20px; font-family: Open Sans; font-weight: 600; line-height: 26px; word-wrap: break-word; letter-spacing: -0.03em">Campo de visão</div>
+              <div style="width: 110.92px; height: 42px; left: 45px; top: 8667.13px; position: absolute; color: #FF4D4F; font-size: 40px; font-family: Open Sans; font-weight: 600; line-height: 52px; word-wrap: break-word">70°</div>
+              <img class="dji-rs-4-pro-65" style="width: 428px; height: 289.31px; left: 0px; top: 9073px; position: absolute" src="assets/dji-rs-4-pro-69.png" decoding="async" loading="lazy">
+              <div class="dji-rs-4-pro-37" style="width: 565px; height: 313.26px; left: -73px; top: 9080.04px; position: absolute; background: linear-gradient(180deg, rgba(0, 0, 0, 0) 55%, black 87%)">
+              </div>
+              <div class="dji-rs-4-pro-198" style="width: 309px; left: 56px; top: 9449px; position: absolute; text-align: center"><span style="color: white; font-size: 14px; font-family: Open Sans; font-weight: 400; line-height: 18.20px; word-wrap: break-word">Aproveitando o novo Focus Pro LiDAR[3] e algoritmos de IA, o ActiveTrack Pro de última geração permite que o gimbal de três eixos do DJI RS 4 Pro rastreie o alvo com firmeza. Mesmo que esteja parcialmente encoberto, ele pode ser rapidamente reposicionado e manter o foco.<br>
+                  <br>
+                </span><span style="color: white; font-size: 14px; font-family: Open Sans; font-weight: 600; line-height: 18.20px; word-wrap: break-word">O ActiveTrack Pro também apresenta excelente desempenho de reconhecimento e rastreamento em cenários que envolvem vários alvos ou quando ele está à distância.</span></div>
+              <div class="dji-rs-4-pro-67" style="left: 92px; top: 9392px; position: absolute; text-align: center; color: #FF4D4F; font-size: 34px; font-family: Open Sans; font-weight: 600; line-height: 37.40px; word-wrap: break-word">ActiveTrack Pro</div>
+              <div class="dji-rs-4-pro-68" style="left: 114px; top: 9374px; position: absolute; text-align: center; color: white; font-size: 14px; font-family: Open Sans; font-weight: 600; line-height: 15.40px; word-wrap: break-word">Processador de última geração</div>
+              <img class="dji-rs-4-pro-65" style="width: 428px; height: 310.31px; left: 0px; top: 9745.34px; position: absolute" src="assets/dji-rs-4-pro-70.png" decoding="async" loading="lazy">
+              <div class="dji-rs-4-pro-6" style="width: 564px; height: 312.71px; left: -70px; top: 9743px; position: absolute; background: linear-gradient(180deg, rgba(0, 0, 0, 0) 0%, black 100%)">
+              </div>
+              <div class="dji-rs-4-pro-86" style="width: 375px; left: 24px; top: 10024px; position: absolute; text-align: center; color: white; font-size: 34px; font-family: Open Sans; font-weight: 600; line-height: 37.40px; word-wrap: break-word">Motores duplos <br>de foco e zoom para desempenho elevado</div>
+              <div class="dji-rs-4-pro-70" style="width: 279px; height: 48px; left: 74px; top: 10196px; position: absolute; text-align: center; color: #FF4D4F; font-size: 48px; font-family: Open Sans; font-weight: 600; line-height: 52.80px; word-wrap: break-word">DJI Focus Pro<br></div>
+              <div class="dji-rs-4-pro-71" style="left: 185px; top: 10168px; position: absolute; text-align: center; color: white; font-size: 20px; font-family: Open Sans; font-weight: 600; line-height: 22px; word-wrap: break-word">Motor</div>
+              <div class="dji-rs-4-pro-69" style="width: 269px; left: 79px; top: 10261px; position: absolute; text-align: center; color: white; font-size: 14px; font-family: Open Sans; font-weight: 400; line-height: 18.20px; word-wrap: break-word">‌O desempenho aprimorado do motor oferece um controle ainda mais preciso, proporcionando uma linguagem cinematográfica cada vez mais versátil.</div>
+              <div class="dji-rs-4-pro-54" style="width: 270px; left: 79px; top: 10463px; position: absolute; text-align: center; color: white; font-size: 20px; font-family: Open Sans; font-weight: 400; line-height: 26px; word-wrap: break-word">Mais responsivo nos controles de foco, zoom e abertura.<br></div>
+              <div class="dji-rs-4-pro-55" style="width: 320px; height: 40px; left: 54px; top: 10427px; position: absolute; text-align: center"><span style="color: white; font-size: 20px; font-family: Open Sans; font-weight: 600; line-height: 26px; word-wrap: break-word">Aumento da velocidade do motor </span><sup style="color: white; font-size: 12.6px; font-family: Open Sans; font-weight: 600; line-height: 0; word-wrap: break-word; vertical-align: 6.96px">[5]</sup></div>
+              <div style="width: 152px; height: 42px; left: 138px; top: 10378px; position: absolute; text-align: center; color: #FF4D4F; font-size: 40px; font-family: Open Sans; font-weight: 600; line-height: 52px; word-wrap: break-word">30% </div>
+              <div class="dji-rs-4-pro-54" style="width: 270px; left: 79px; top: 10633px; position: absolute; text-align: center; color: white; font-size: 20px; font-family: Open Sans; font-weight: 400; line-height: 26px; word-wrap: break-word">Mais mainstream e versátil.</div>
+              <div class="dji-rs-4-pro-57" style="width: 320px; height: 40px; left: 54px; top: 10597px; position: absolute; text-align: center; color: white; font-size: 20px; font-family: Open Sans; font-weight: 600; line-height: 26px; word-wrap: break-word">Haste universal</div>
+              <div class="dji-rs-4-pro-58" style="width: 152px; height: 42px; left: 138px; top: 10548px; position: absolute; text-align: center; color: #FF4D4F; font-size: 40px; font-family: Open Sans; font-weight: 600; line-height: 52px; word-wrap: break-word">15 mm</div>
+              <div class="dji-rs-4-pro-59" style="width: 216px; left: 106px; top: 10787px; position: absolute; text-align: center; color: white; font-size: 20px; font-family: Open Sans; font-weight: 400; line-height: 26px; word-wrap: break-word">Resposta rápida para operação perfeita</div>
+              <div class="dji-rs-4-pro-57" style="width: 320px; height: 40px; left: 54px; top: 10751px; position: absolute; text-align: center; color: white; font-size: 20px; font-family: Open Sans; font-weight: 600; line-height: 26px; word-wrap: break-word">Menor latência[7] </div>
+              <div class="dji-rs-4-pro-58" style="width: 152px; height: 42px; left: 138px; top: 10702px; position: absolute; text-align: center; color: #FF4D4F; font-size: 40px; font-family: Open Sans; font-weight: 600; line-height: 52px; word-wrap: break-word">10 ms</div>
+              <img class="dji-rs-4-pro-89" style="width: 414px; height: 277.91px; left: 7px; top: 10915px; position: absolute; border-radius: 10.16px" src="assets/dji-rs-4-pro-71.png" decoding="async" loading="lazy">
+              <div class="dji-rs-4-pro-67" style="left: 67px; top: 11239.64px; position: absolute; color: #FF4D4F; font-size: 48px; font-family: Open Sans; font-weight: 600; line-height: 52.80px; word-wrap: break-word">alta eficiência</div>
+              <div class="dji-rs-4-pro-68" style="left: 124px; top: 11217.64px; position: absolute; color: white; font-size: 20px; font-family: Open Sans; font-weight: 600; line-height: 22px; word-wrap: break-word">Controle de lente de</div>
+              <div class="dji-rs-4-pro-199" style="width: 318px; left: 55px; top: 11305.64px; position: absolute; text-align: center"><span style="color: white; font-size: 14px; font-family: Open Sans; font-weight: 400; line-height: 18.20px; word-wrap: break-word">O DJI RS 4 Pro possui um novo interruptor que permite controlar o movimento do estabilizador ou do zoom da lente direto do joystick. No Modo de Controle de Zoom, cinegrafistas podem optar entre o zoom motorizado para lentes PZ com imagem nítida </span><sup style="color: white; font-size: 8.82px; font-family: Open Sans; font-weight: 400; line-height: 0; word-wrap: break-word; vertical-align: 4.87px">[8]  </sup><span style="color: white; font-size: 14px; font-family: Open Sans; font-weight: 400; line-height: 18.20px; word-wrap: break-word">e o zoom do motor de foco externo.<br>
+                  <br>Quando combinado a dois motores Focus Pro </span><sup style="color: white; font-size: 8.82px; font-family: Open Sans; font-weight: 400; line-height: 0; word-wrap: break-word; vertical-align: 4.87px">[4]</sup><span style="color: white; font-size: 14px; font-family: Open Sans; font-weight: 400; line-height: 18.20px; word-wrap: break-word">, o DJI RS 4 Pro permite que cinegrafistas ajustem o zoom da lente e controlem o foco com precisão por meio do interruptor de forma simples e estável.</span></div>
+                <img class="dji-rs-4-pro-65" style="width: 428px; height: 315.99px; left: 0px; top: 11616px; position: absolute" src="assets/dji-rs-4-pro-72.png" decoding="async" loading="lazy">
+                <div class="dji-rs-4-pro-6" style="width: 1203px; height: 349px; left: -139px; top: 11616px; position: absolute; background: linear-gradient(180deg, rgba(0, 0, 0, 0) 43%, black 100%)">
+                </div>
+                <img class="dji-rs-4-pro-2" style="width: 428px; height: 349.87px; left: 0px; top: 12314px; position: absolute; border-radius: 38.24px" src="assets/dji-rs-4-pro-73.png" decoding="async" loading="lazy">
+                <div class="dji-rs-4-pro-90" style="width: 321px; height: 73px; left: 51px; top: 12213px; position: absolute; text-align: center; color: white; font-size: 14px; font-family: Open Sans; font-weight: 400; line-height: 18.20px; word-wrap: break-word">O DJI Focus Pro inaugura a inovadora tecnologia de foco automático LiDAR e apresenta uma unidade de controle manual de amortecimento magnético de alta precisão: a Unidade portátil Focus Pro[3].</div>
+                <div class="dji-rs-4-pro-91" style="width: 326px; left: 49px; top: 12112px; position: absolute; text-align: center; color: white; font-size: 28px; font-family: Open Sans; font-weight: 600; line-height: 33.60px; word-wrap: break-word">Unidade portátil<br> DJI Focus Pro</div>
+                <div class="dji-rs-4-pro-87" style="width: 390px; left: 17px; top: 11898px; position: absolute; text-align: center; color: white; font-size: 34px; font-family: Open Sans; font-weight: 600; line-height: 37.40px; word-wrap: break-word">Sistema de controle remoto para colaboração profissional</div>
+                <div class="dji-rs-4-pro-92" style="width: 298px; left: 49px; top: 12781px; position: absolute; color: white; font-size: 14px; font-family: Open Sans; font-weight: 400; line-height: 18.20px; word-wrap: break-word">Suporta controle FIZ, dominando o poder de foco, íris e zoom com facilidade.</div>
+                <div class="dji-rs-4-pro-93" style="width: 237px; height: 40px; left: 49px; top: 12741px; position: absolute; color: white; font-size: 20px; font-family: Open Sans; font-weight: 600; line-height: 26px; word-wrap: break-word">Canais de controle</div>
+                <div class="dji-rs-4-pro-94" style="width: 63.94px; height: 42px; left: 49px; top: 12692px; position: absolute; color: #FF4D4F; font-size: 40px; font-family: Open Sans; font-weight: 600; line-height: 52px; word-wrap: break-word">FIZ</div>
+                <div class="dji-rs-4-pro-200" style="width: 271px; left: 49px; top: 12929px; position: absolute; color: white; font-size: 14px; font-family: Open Sans; font-weight: 400; line-height: 18.20px; word-wrap: break-word">‌Suporta filmagens em veículos e tomadas únicas de longa distância.</div>
+                <div class="dji-rs-4-pro-96" style="width: 310px; left: 49px; top: 12896px; position: absolute; justify-content: center; display: flex; flex-direction: column; color: white; font-size: 20px; font-family: Open Sans; font-weight: 600; line-height: 26px; word-wrap: break-word">Distância de comunicação</div>
+                <div class="dji-rs-4-pro-53" style="width: 117.69px; height: 42px; left: 49px; top: 12847px; position: absolute; color: #FF4D4F; font-size: 40px; font-family: Open Sans; font-weight: 600; line-height: 52px; word-wrap: break-word">160 m</div>
+                <div class="dji-rs-4-pro-200" style="width: 271px; left: 49px; top: 13077px; position: absolute; color: white; font-size: 14px; font-family: Open Sans; font-weight: 400; line-height: 18.20px; word-wrap: break-word">Fornece feedback tátil de retorno elástico para pontos finais, facilitando um foco mais preciso em um caminho fixo ou em dois assuntos em posições estáticas.</div>
+                <div class="dji-rs-4-pro-96" style="width: 310px; left: 49px; top: 13035px; position: absolute; justify-content: center; display: flex; flex-direction: column; color: white; font-size: 20px; font-family: Open Sans; font-weight: 600; line-height: 26px; word-wrap: break-word">Marcação eletrônica</div>
+                <div class="dji-rs-4-pro-99" style="left: 49px; top: 12995px; position: absolute; color: #FF4D4F; font-size: 34px; font-family: Open Sans; font-weight: 600; line-height: 44.20px; word-wrap: break-word">Pontos A-B</div>
+                <div class="dji-rs-4-pro-100" style="width: 271px; left: 49px; top: 13297px; position: absolute"><span style="color: white; font-size: 14px; font-family: Open Sans; font-weight: 400; line-height: 18.20px; word-wrap: break-word">Permite iniciar ou parar remotamente a gravação da câmera </span><sup style="color: white; font-size: 8.82px; font-family: Open Sans; font-weight: 400; line-height: 0; word-wrap: break-word; vertical-align: 4.87px">[8]</sup><span style="color: white; font-size: 14px; font-family: Open Sans; font-weight: 400; line-height: 18.20px; word-wrap: break-word">,‌ melhorando a eficiência da filmagem com câmeras de cabo, jibs e outros suportes.</span></div>
+                <div class="dji-rs-4-pro-96" style="width: 310px; left: 49px; top: 13257px; position: absolute; justify-content: center; display: flex; flex-direction: column; color: white; font-size: 20px; font-family: Open Sans; font-weight: 600; line-height: 26px; word-wrap: break-word">Funcionalidade Bluetooth</div>
+                <div class="dji-rs-4-pro-102" style="left: 49px; top: 13181px; position: absolute; color: #FF4D4F; font-size: 34px; font-family: Open Sans; font-weight: 600; line-height: 30.94px; word-wrap: break-word">Iniciar/interromper <br>a gravação</div>
+                <div class="dji-rs-4-pro-88" style="width: 310px; height: 209px; left: 49px; top: 13751px; position: absolute"><span style="color: rgba(255, 255, 255, 0.60); font-size: 14px; font-family: Open Sans; font-weight: 600; line-height: 18.20px; word-wrap: break-word">Em gravações colaborativas em equipe, o operador do estabilizador pode controlar o DJI RS 4 Pro por meio de dispositivos, como DJI Master Wheels, DJI Ronin 4D Hand Grips e DJI High-Bright Remote Monitor.</span><sup style="color: rgba(255, 255, 255, 0.60); font-size: 8.82px; font-family: Open Sans; font-weight: 600; line-height: 0; word-wrap: break-word; vertical-align: 4.87px">[3]‌</sup><span style="color: rgba(255, 255, 255, 0.60); font-size: 14px; font-family: Open Sans; font-weight: 600; line-height: 18.20px; word-wrap: break-word"> O operador de foco também pode ativar o formato de ondas LiDAR no monitor remoto de alto brilho para assistência de foco inteligente</span><sup style="color: rgba(255, 255, 255, 0.60); font-size: 8.82px; font-family: Open Sans; font-weight: 600; line-height: 0; word-wrap: break-word; vertical-align: 4.87px">‌[9]</sup><span style="color: rgba(255, 255, 255, 0.60); font-size: 14px; font-family: Open Sans; font-weight: 600; line-height: 18.20px; word-wrap: break-word">‌, permitindo um controle mais preciso com a unidade portátil Focus Pro.<br>
+                  </span></div>
+                <img class="dji-rs-4-pro-65" style="width: 428px; height: 325px; left: 0px; top: 13405px; position: absolute" src="assets/dji-rs-4-pro-74.png" decoding="async" loading="lazy">
+                <div data-select="1" class="dji-rs-4-pro-201 dji-rs-4-pro-bt" style="width: 428px; height: 215.49px; left: 0px; top: 13960px; position: absolute" data-lamina-tab-layout="mobile-tab-1" data-lamina-tab-selected="0">
+                  
+                  <img class="dji-rs-4-pro-105 lamina-tab-media" style="width: 428px; height: 190.22px; left: 0px; top: 0px; position: absolute" src="assets/dji-rs-4-pro-bt-1.jpg" decoding="async" loading="lazy" alt="" data-lamina-tab-media="mobile-tab-1" data-lamina-tab-media-index="0">
+                  <img class="dji-rs-4-pro-105 lamina-tab-media" style="width: 428px; height: 190.22px; left: 0px; top: 0px; position: absolute" src="assets/dji-rs-4-pro-bt-2.jpg" decoding="async" loading="lazy" alt="" data-lamina-tab-media="mobile-tab-1" data-lamina-tab-media-index="1" hidden="hidden">
+                  <img class="dji-rs-4-pro-105 lamina-tab-media" style="width: 428px; height: 190.22px; left: 0px; top: 0px; position: absolute" src="assets/dji-rs-4-pro-bt-3.jpg" decoding="async" loading="lazy" alt="" data-lamina-tab-media="mobile-tab-1" data-lamina-tab-media-index="2" hidden="hidden">
+                  <div class="dji-rs-4-pro-24 lamina-tab-list" style="height: 15.75px; left: -1.68px; top: 198.84px; position: absolute; border-bottom: 0.59px rgba(255, 255, 255, 0.30) solid; justify-content: center; align-items: center; gap: 23.78px; display: inline-flex" data-lamina-tab-list="mobile-tab-1" role="tablist">
+                    <div class="dji-rs-4-pro-108 lamina-tab-trigger" style="padding-left: 4.46px; padding-right: 4.46px; padding-top: 2.97px; padding-bottom: 2.97px; justify-content: center; align-items: center; gap: 2.97px; display: flex" data-lamina-tab-trigger="0" role="tab" aria-selected="true" tabindex="0">
+                      <div class="dji-rs-4-pro-109" style="text-align: center; color: white; font-size: 7.13px; font-family: Open Sans; font-weight: 400; word-wrap: break-word">Conectividade bluetooth, controle sem fio</div>
+                    </div>
+                    <div class="dji-rs-4-pro-108 lamina-tab-trigger" style="padding: 2.97px; justify-content: center; align-items: center; gap: 2.97px; display: flex" data-lamina-tab-trigger="1" role="tab" aria-selected="false" tabindex="-1">
+                      <div class="dji-rs-4-pro-109" style="text-align: center; color: rgba(255, 255, 255, 0.50); font-size: 7.13px; font-family: Open Sans; font-weight: 400; word-wrap: break-word">Personalização da função do acionador</div>
+                    </div>
+                    <div class="dji-rs-4-pro-108 lamina-tab-trigger" style="padding: 2.97px; justify-content: center; align-items: center; gap: 2.97px; display: flex" data-lamina-tab-trigger="2" role="tab" aria-selected="false" tabindex="-1">
+                      <div class="dji-rs-4-pro-109" style="text-align: center; color: rgba(255, 255, 255, 0.50); font-size: 7.13px; font-family: Open Sans; font-weight: 400; word-wrap: break-word">Interruptor de modo do estabilizador</div>
+                    </div>
+                  </div>
+                  <div class="dji-rs-4-pro-110 lamina-tab-panel" style="width: 202.41px; left: 112.94px; top: 224.11px; position: absolute; text-align: center" data-lamina-tab-panel="0"><span style="color: rgba(255, 255, 255, 0.60); font-size: 13px; font-family: Open Sans; font-weight: 600; line-height: 16.90px; word-wrap: break-word">DJI RS 4 Pro adota tecnologia bluetooth de modo duplo e suporta obturador sem fio e controle de zoom sem fio. Após alternar o modo do joystick ao controle de zoom, é possível usar o joystick para executar zoom motorizado para lentes PZ, bem como zoom com imagem nítida.</span><sup style="color: rgba(255, 255, 255, 0.60); font-size: 8.19px; font-family: Open Sans; font-weight: 600; line-height: 0; word-wrap: break-word; vertical-align: 4.52px">[8]</sup></div><div class="dji-rs-4-pro-110 lamina-tab-panel" style="width: 202.41px; left: 112.94px; top: 224.11px; position: absolute; text-align: center" data-lamina-tab-panel="1" hidden="hidden"><span style="color: rgba(255, 255, 255, 0.60); font-size: 13px; font-family: Open Sans; font-weight: 600; line-height: 16.90px; word-wrap: break-word">A função do acionador pode ser personalizada ao modo FPV, no qual pressionar e segurar o acionador faz com que os três eixos do estabilizador sigam a direção do movimento do cabo. O que é particularmente útil ao fazer gravações rotacionais ou simular um POV.</span></div><div class="dji-rs-4-pro-110 lamina-tab-panel" style="width: 202.41px; left: 112.94px; top: 224.11px; position: absolute; text-align: center" data-lamina-tab-panel="2" hidden="hidden"><span style="color: rgba(255, 255, 255, 0.60); font-size: 13px; font-family: Open Sans; font-weight: 600; line-height: 16.90px; word-wrap: break-word">Alterne o interruptor do modo do Estabilizador de PF, PTF e FPV. Você também pode substituir o modo FPV pelo modo 3D Roll 360 ou modo Personalizado com base em sua preferência e requisitos de fotografia, garantindo uma operação perfeita.</span></div>
+                </div>
+                <div class="dji-rs-4-pro-8" style="width: 572.63px; height: 96.63px; left: -72.31px; top: 14355px; position: absolute; background: black; border-radius: 17.14px">
+                </div>
+                <div class="dji-rs-4-pro-pill" aria-hidden="true" style="width: 572.63px; height: 119px; left: -72.31px; top: 14365px; position: absolute; overflow: hidden; border-radius: 17.14px"><div class="dji-rs-4-pro-10" style="width: 231.37px; height: 130.90px; left: 175.71px; top: -6.67px; position: absolute; opacity: 0.80; background: linear-gradient(180deg, rgba(255, 77, 79, 0) 1%, black 100%); border-radius: 50%; filter: blur(14.66px)">
+                </div><div class="dji-rs-4-pro-13" style="width: 123.25px; height: 323.96px; left: 141.95px; top: 149.16px; position: absolute; transform: rotate(-103deg); transform-origin: top left; opacity: 0.80; background: rgba(222, 90, 111, 0.05); box-shadow: -8.777219772338867px 8.777219772338867px 22.192049026489258px -21.47617530822754px rgba(68, 68, 68, 0.22) inset; border-radius: 50%; filter: blur(3.03px); backdrop-filter: blur(18.15px)">
+                </div><div class="dji-rs-4-pro-11" style="width: 539.23px; height: 61.88px; left: 11.13px; top: 78.06px; position: absolute; background: linear-gradient(180deg, rgba(0, 0, 0, 0) 0%, black 100%)">
+                </div></div>
+                
+                
+                
+                <div class="dji-rs-4-pro-82" style="left: 79.02px; top: 14404px; position: absolute; text-align: center; justify-content: center; display: flex; flex-direction: column; color: transparent; font-size: 47.60px; font-family: Open Sans; font-weight: 600; line-height: 28.56px; word-wrap: break-word; padding-top: 12px; background: linear-gradient(180deg, #F64C32 17.36%, #400303 100%); -webkit-background-clip: text; background-clip: text; filter: drop-shadow(0px 4px 2px rgba(0, 0, 0, 0.25)); white-space: nowrap"><span class="lamina-text-block" style="display: block"><sup style="font-size: 29.99px; line-height: 0; vertical-align: 16.56px">Duração prolongada<br> da bateria </sup></span></div>
+                <div class="dji-rs-4-pro-83" style="left: 150.45px; top: 14376.90px; position: absolute; color: rgba(255, 255, 255, 0.60); font-size: 11.42px; font-family: Open Sans; font-weight: 400; line-height: 22.85px; word-wrap: break-word">Desempenho profissional</div>
+                <div class="dji-rs-4-pro-8" style="width: 572.63px; height: 96.63px; left: -72.31px; top: 15235px; position: absolute; background: black; border-radius: 17.14px">
+                </div>
+                <div class="dji-rs-4-pro-pill" aria-hidden="true" style="width: 566px; height: 119px; left: -72px; top: 15245px; position: absolute; overflow: hidden; border-radius: 17.14px"><div class="dji-rs-4-pro-10" style="width: 231.37px; height: 130.90px; left: 175.4px; top: -6.67px; position: absolute; opacity: 0.80; background: linear-gradient(180deg, rgba(255, 77, 79, 0) 1%, rgba(0, 0, 0, 0.70) 100%); border-radius: 50%; filter: blur(14.66px)">
+                </div><div class="dji-rs-4-pro-13" style="width: 123.25px; height: 323.96px; left: 142.64px; top: 148.16px; position: absolute; transform: rotate(-103deg); transform-origin: top left; opacity: 0.80; background: rgba(222, 90, 111, 0.05); box-shadow: -8.777219772338867px 8.777219772338867px 22.192049026489258px -21.47617530822754px rgba(68, 68, 68, 0.22) inset; border-radius: 50%; filter: blur(3.03px); backdrop-filter: blur(18.15px)">
+                </div><div class="dji-rs-4-pro-11" style="width: 539.23px; height: 61.88px; left: 10.82px; top: 78.06px; position: absolute; background: linear-gradient(180deg, rgba(0, 0, 0, 0) 0%, black 100%)">
+                </div></div>
+                
+                
+                
+                <div class="dji-rs-4-pro-82" style="left: 68.02px; top: 15289px; position: absolute; text-align: center; justify-content: center; display: flex; flex-direction: column; color: transparent; font-size: 47.60px; font-family: Open Sans; font-weight: 600; line-height: 28.56px; word-wrap: break-word; padding-top: 12px; background: linear-gradient(180deg, #F64C32 29.59%, #400303 100%); -webkit-background-clip: text; background-clip: text; filter: drop-shadow(0px 4px 2px rgba(0, 0, 0, 0.25)); white-space: nowrap"><span class="lamina-text-block" style="display: block"><sup style="font-size: 29.99px; line-height: 0; vertical-align: 16.56px">Escalação aprimorada</sup></span></div>
+                <div class="dji-rs-4-pro-85" style="width: 128px; left: 150px; top: 15267px; position: absolute; text-align: center; color: rgba(255, 255, 255, 0.60); font-size: 11.42px; font-family: Open Sans; font-weight: 400; line-height: 22.85px; word-wrap: break-word">Ecossistema profissional</div>
+                <div class="dji-rs-4-pro-112" style="width: 285px; left: 64px; top: 14921px; position: absolute; text-align: center"><span style="color: white; font-size: 14px; font-family: Open Sans; font-weight: 400; line-height: 18.20px; word-wrap: break-word">Continue filmando! Com o punho de bateria de alta capacidade DJI RS BG70 ‌</span><sup style="color: white; font-size: 8.82px; font-family: Open Sans; font-weight: 400; line-height: 0; word-wrap: break-word; vertical-align: 4.87px">[3]‌</sup><span style="color: white; font-size: 14px; font-family: Open Sans; font-weight: 400; line-height: 18.20px; word-wrap: break-word">,estenda a autonomia da bateria do DJI RS 4 Pro para 29 horas. O cabo da bateria é capaz de carregar sua câmera e acessórios, com até 18W, por meio da porta USB-C na parte inferior.<br>
+                  </span></div>
+                <div class="dji-rs-4-pro-113" style="width: 285.12px; left: 64px; top: 14836px; position: absolute; text-align: center"><span style="color: white; font-size: 24px; font-family: Open Sans; font-weight: 600; line-height: 31.20px; word-wrap: break-word">‌Cabo de </span><span style="color: #FF4D4F; font-size: 24px; font-family: Open Sans; font-weight: 600; line-height: 31.20px; word-wrap: break-word">alta capacidade </span><span style="color: white; font-size: 24px; font-family: Open Sans; font-weight: 600; line-height: 31.20px; word-wrap: break-word">da bateria</span></div>
+                <div class="dji-rs-4-pro-52" style="left: 49px; top: 15089.49px; position: absolute"><span style="color: white; font-size: 13px; font-family: Open Sans; font-weight: 600; line-height: 16.90px; word-wrap: break-word; letter-spacing: -0.03em">Duração da bateria</span><sup style="color: white; font-size: 8.19px; font-family: Open Sans; font-weight: 600; line-height: 0; word-wrap: break-word; letter-spacing: -0.03em; vertical-align: 4.52px">[10]</sup></div>
+                <div class="dji-rs-4-pro-115" style="left: 49px; top: 15063px; position: absolute; color: #FF4D4F; font-size: 25.23px; font-family: Open Sans; font-weight: 600; line-height: 32.80px; word-wrap: break-word">29 horas</div>
+                <div class="dji-rs-4-pro-116" style="left: 237.61px; top: 15147.53px; position: absolute; color: white; font-size: 13px; font-family: Open Sans; font-weight: 600; line-height: 16.90px; word-wrap: break-word; letter-spacing: -0.03em">Potência máxima de saída</div>
+                <div class="dji-rs-4-pro-117" style="width: 95.88px; height: 26.49px; left: 237.61px; top: 15121.03px; position: absolute; color: #FF4D4F; font-size: 25.23px; font-family: Open Sans; font-weight: 600; line-height: 32.80px; word-wrap: break-word">18 W</div>
+                <div class="dji-rs-4-pro-52" style="left: 49px; top: 15152.57px; position: absolute"><span style="color: white; font-size: 13px; font-family: Open Sans; font-weight: 600; line-height: 16.90px; word-wrap: break-word; letter-spacing: -0.03em">Carga completa rápida </span><sup style="color: white; font-size: 8.19px; font-family: Open Sans; font-weight: 600; line-height: 0; word-wrap: break-word; letter-spacing: -0.03em; vertical-align: 4.52px">‌[11]</sup></div>
+                <div class="dji-rs-4-pro-115" style="left: 49px; top: 15126.08px; position: absolute; color: #FF4D4F; font-size: 25.23px; font-family: Open Sans; font-weight: 600; line-height: 32.80px; word-wrap: break-word">2,5 horas</div>
+                <div class="dji-rs-4-pro-116" style="left: 237.61px; top: 15089.49px; position: absolute; color: white; font-size: 13px; font-family: Open Sans; font-weight: 600; line-height: 16.90px; word-wrap: break-word; letter-spacing: -0.03em">Carregamento rápido PD</div>
+                <div class="dji-rs-4-pro-117" style="width: 95.88px; height: 26.49px; left: 237.61px; top: 15063px; position: absolute; color: #FF4D4F; font-size: 25.23px; font-family: Open Sans; font-weight: 600; line-height: 32.80px; word-wrap: break-word">45 W</div>
+                <img class="dji-rs-4-pro-65" style="width: 428px; height: 319.35px; left: 0px; top: 15364px; position: absolute" src="assets/dji-rs-4-pro-76.png" decoding="async" loading="lazy">
+                <div class="dji-rs-4-pro-6" style="width: 570px; height: 325.04px; left: -70px; top: 15364px; position: absolute; background: linear-gradient(180deg, rgba(0, 0, 0, 0) 43%, black 100%)">
+                </div>
+                <div class="dji-rs-4-pro-72" style="width: 328px; left: 50px; top: 15762px; position: absolute; text-align: center; color: white; font-size: 14px; font-family: Open Sans; font-weight: 400; line-height: 18.20px; word-wrap: break-word">DJI Focus Pro fornece uma solução de controle de lente abrangente e poderosa para cineastas. Tanto as criações individuais quanto as colaborações em equipe podem acessar facilmente o foco automático LiDAR inteligente, bem como o controle multicanal de foco, abertura e zoom para domínio dinâmico de cada momento de foco.</div>
+                <img class="dji-rs-4-pro-150" style="width: 428px; height: 251.56px; left: 0px; top: 15932px; position: absolute; border-radius: 7.05px" src="assets/dji-rs-4-pro-77.png" decoding="async" loading="lazy">
+                <img class="dji-rs-4-pro-121" style="width: 319.03px; height: 284px; left: 52px; top: 16270px; position: absolute; border-radius: 8.08px" src="assets/dji-rs-4-pro-78.png" decoding="async" loading="lazy">
+                <div class="dji-rs-4-pro-122" style="width: 330px; height: 150px; left: 52.01px; top: 16639px; position: absolute"><span style="color: white; font-size: 14px; font-family: Open Sans; font-weight: 400; line-height: 19.60px; word-wrap: break-word">O DJI RS 4 Pro pode alimentar o Focus Pro LiDAR ‌</span><sup style="color: white; font-size: 8.82px; font-family: Open Sans; font-weight: 400; line-height: 0; word-wrap: break-word; vertical-align: 4.87px">[3]</sup><span style="color: white; font-size: 14px; font-family: Open Sans; font-weight: 400; line-height: 19.60px; word-wrap: break-word">‌ e o Transmissor de Vídeo DJI </span><sup style="color: white; font-size: 8.82px; font-family: Open Sans; font-weight: 400; line-height: 0; word-wrap: break-word; vertical-align: 4.87px">[3]‌  </sup><span style="color: white; font-size: 14px; font-family: Open Sans; font-weight: 400; line-height: 19.60px; word-wrap: break-word">simultaneamente, por meio do Focus Pro LiDAR para DJI Transmission Cable Hub‌ </span><sup style="color: white; font-size: 8.82px; font-family: Open Sans; font-weight: 400; line-height: 0; word-wrap: break-word; vertical-align: 4.87px">[3]</sup><span style="color: white; font-size: 14px; font-family: Open Sans; font-weight: 400; line-height: 19.60px; word-wrap: break-word">‌, eliminando a necessidade de uma montagem em V externa. <br>
+                    <br>O Transmissor de Vídeo DJI também pode ser facilmente montado diretamente na parte inferior do DJI RS 4 Pro, por meio da sapata fria, reduzindo a carga da configuração portátil.<br>
+                  </span></div>
+                <div class="dji-rs-4-pro-123" style="width: 244px; left: 52px; top: 16579px; position: absolute; color: #FF4D4F; font-size: 20px; font-family: Open Sans; font-weight: 600; line-height: 24px; word-wrap: break-word; letter-spacing: -0.02em">Instalação integrada e fonte de alimentação</div>
+                
+                <img class="dji-rs-4-pro-127" style="width: 333.63px; height: 297px; left: 45.03px; top: 16858px; position: absolute; border-radius: 8.45px" src="assets/dji-rs-4-pro-79.png" decoding="async" loading="lazy">
+                <div class="dji-rs-4-pro-125" style="width: 330px; left: 52.01px; top: 17215px; position: absolute"><span style="color: white; font-size: 14px; font-family: Open Sans; font-weight: 400; line-height: 19.60px; word-wrap: break-word">Com as alças do cabo do Ronin 4D</span><sup style="color: white; font-size: 8.82px; font-family: Open Sans; font-weight: 400; line-height: 0; word-wrap: break-word; vertical-align: 4.87px">‌ [3]</sup><span style="color: white; font-size: 14px; font-family: Open Sans; font-weight: 400; line-height: 19.60px; word-wrap: break-word">‌ e o monitor remoto com brilho intenso, ‌</span><sup style="color: white; font-size: 8.82px; font-family: Open Sans; font-weight: 400; line-height: 0; word-wrap: break-word; vertical-align: 4.87px">[3]</sup><span style="color: white; font-size: 14px; font-family: Open Sans; font-weight: 400; line-height: 19.60px; word-wrap: break-word">‌ você pode selecionar alvos de foco LiDAR, alternar entre modos de foco e habilitar o formato de ondas LiDAR.</span><sup style="color: white; font-size: 8.82px; font-family: Open Sans; font-weight: 400; line-height: 0; word-wrap: break-word; vertical-align: 4.87px">[9]</sup></div>
+                <div class="dji-rs-4-pro-126" style="width: 325px; left: 52.01px; top: 17184px; position: absolute; color: #FF4D4F; font-size: 20px; font-family: Open Sans; font-weight: 600; line-height: 24px; word-wrap: break-word; letter-spacing: -0.02em">‌Assistência de foco inteligente</div>
+                
+                <img class="dji-rs-4-pro-127" style="width: 333.63px; height: 297px; left: 45.01px; top: 17324px; position: absolute; border-radius: 8.45px" src="assets/dji-rs-4-pro-controle-mobile.png" decoding="async" loading="lazy">
+                
+                <div class="dji-rs-4-pro-125" style="width: 330px; left: 52.01px; top: 17681px; position: absolute"><span style="color: white; font-size: 14px; font-family: Open Sans; font-weight: 400; line-height: 19.60px; word-wrap: break-word">Em conjunto com os punhos Ronin 4D </span><sup style="color: white; font-size: 8.82px; font-family: Open Sans; font-weight: 400; line-height: 0; word-wrap: break-word; vertical-align: 4.87px">[3]‌</sup><span style="color: white; font-size: 14px; font-family: Open Sans; font-weight: 400; line-height: 19.60px; word-wrap: break-word">, unidade manual Focus Pro </span><sup style="color: white; font-size: 8.82px; font-family: Open Sans; font-weight: 400; line-height: 0; word-wrap: break-word; vertical-align: 4.87px">[3]</sup><span style="color: white; font-size: 14px; font-family: Open Sans; font-weight: 400; line-height: 19.60px; word-wrap: break-word">‌, Master Wheels </span><sup style="color: white; font-size: 8.82px; font-family: Open Sans; font-weight: 400; line-height: 0; word-wrap: break-word; vertical-align: 4.87px">‌[3]</sup><span style="color: white; font-size: 14px; font-family: Open Sans; font-weight: 400; line-height: 19.60px; word-wrap: break-word">‌ e monitor remoto de alto brilho </span><sup style="color: white; font-size: 8.82px; font-family: Open Sans; font-weight: 400; line-height: 0; word-wrap: break-word; vertical-align: 4.87px">[3]</sup><span style="color: white; font-size: 14px; font-family: Open Sans; font-weight: 400; line-height: 19.60px; word-wrap: break-word">‌, você pode controlar remotamente o gimbal, os parâmetros de câmera e foco, alcançando um processo criativo integrado que abrange recepção, monitoramento e controle.</span></div>
+                <div class="dji-rs-4-pro-129" style="left: 52.01px; top: 17641px; position: absolute; color: #FF4D4F; font-size: 20px; font-family: Open Sans; font-weight: 600; line-height: 24px; word-wrap: break-word; letter-spacing: -0.02em">Controle do estabilizador/foco/câmera</div>
+                
+                
+                <img class="dji-rs-4-pro-121" style="width: 339px; height: 284px; left: 52.01px; top: 17847px; position: absolute; border-radius: 8.08px" src="assets/dji-rs-4-pro-81.png" decoding="async" loading="lazy">
+                <div class="dji-rs-4-pro-130" style="width: 311px; left: 52.01px; top: 18195px; position: absolute"><span style="color: white; font-size: 14px; font-family: Open Sans; font-weight: 400; line-height: 19.60px; word-wrap: break-word">Quando o DJI RS 4 Pro é montado em suportes como uma lança, câmera de cabo ou ventosa de veículo, você pode controlar diretamente as operações do menu principal da Sony e de outras câmeras sem espelho por meio do modo Mirro Control, no monitor remoto de alto brilho </span><sup style="color: white; font-size: 8.82px; font-family: Open Sans; font-weight: 400; line-height: 0; word-wrap: break-word; vertical-align: 4.87px">[3]‌</sup><span style="color: white; font-size: 14px; font-family: Open Sans; font-weight: 400; line-height: 19.60px; word-wrap: break-word">, sem precisar desconectar sua câmera.<br>
+                  </span></div>
+                <div class="dji-rs-4-pro-131" style="width: 298px; left: 52.01px; top: 18156px; position: absolute; color: #FF4D4F; font-size: 20px; font-family: Open Sans; font-weight: 600; line-height: 24px; word-wrap: break-word; letter-spacing: -0.02em">Modo de controle espelhado</div>
+                
+                
+                
+                <img class="dji-rs-4-pro-202" style="width: 339px; height: 284px; left: 52px; top: 18370px; position: absolute; border-radius: 8.08px" src="assets/dji-rs-4-pro-82.png" decoding="async" loading="lazy">
+                <div class="dji-rs-4-pro-132" style="width: 328px; left: 52px; top: 18752px; position: absolute"><span style="color: white; font-size: 14px; font-family: Open Sans; font-weight: 400; line-height: 19.60px; word-wrap: break-word">Tanto cinegrafistas solo quanto pequenas equipes podem utilizar o Transmissor de imagens do Ronin </span><sup style="color: white; font-size: 8.82px; font-family: Open Sans; font-weight: 400; line-height: 0; word-wrap: break-word; vertical-align: 4.87px">[3] </sup><span style="color: white; font-size: 14px; font-family: Open Sans; font-weight: 400; line-height: 19.60px; word-wrap: break-word">para transmissões ao vivo de alta definição, controle remoto do estabilizador e da câmera, ActiveTrack 4.0, Force Mobile e muitos outros recursos, alcançando uma experiência de gravação integrada com capacidades de monitoramento e controle.<br>
+                  </span></div>
+                <div class="dji-rs-4-pro-133" style="width: 298px; left: 52px; top: 18679px; position: absolute"><span style="color: white; font-size: 20px; font-family: Open Sans; font-weight: 600; line-height: 24px; word-wrap: break-word; letter-spacing: -0.02em">Compatível com o </span><span style="color: #FF4D4F; font-size: 20px; font-family: Open Sans; font-weight: 600; line-height: 24px; word-wrap: break-word; letter-spacing: -0.02em">Transmissor de imagens (DJI Ronin)</span></div>
+                <div class="dji-rs-4-pro-134" style="width: 300px; left: 64px; top: 16208px; position: absolute; text-align: center; justify-content: center; display: flex; flex-direction: column"><span class="lamina-text-block" style="display: block; font-size: 34px; line-height: 20.40px; white-space: nowrap"><sup style="color: white; font-size: 21.42px; font-family: Open Sans; font-weight: 600; line-height: 0; word-wrap: break-word; vertical-align: 11.83px">Compatibilidade com <br>a</sup><sup style="color: #FF4D4F; font-size: 21.42px; font-family: Open Sans; font-weight: 600; line-height: 0; word-wrap: break-word; vertical-align: 11.83px"> DJI Transmission</sup></span></div>
+                <div class="dji-rs-4-pro-113" style="width: 285.12px; left: 64px; top: 15688px; position: absolute; text-align: center"><span style="color: white; font-size: 24px; font-family: Open Sans; font-weight: 600; line-height: 31.20px; word-wrap: break-word">Ecossistema de <br>
+                  </span><span style="color: #FF4D4F; font-size: 24px; font-family: Open Sans; font-weight: 600; line-height: 31.20px; word-wrap: break-word">controle de foco</span></div>
+                <div class="dji-rs-4-pro-204" style="width: 330px; left: 56px; top: 19002px; position: absolute; text-align: center"><span style="color: white; font-size: 14px; font-family: Open Sans; font-weight: 400; line-height: 18.20px; word-wrap: break-word">DJI RS 4 Pro oferece suporte a várias configurações de portátil, incluindo configurações de pasta, alça dupla e montagem em anel. </span><sup style="color: white; font-size: 8.82px; font-family: Open Sans; font-weight: 400; line-height: 0; word-wrap: break-word; vertical-align: 4.87px">[12]</sup><span style="color: white; font-size: 14px; font-family: Open Sans; font-weight: 400; line-height: 18.20px; word-wrap: break-word"> Além disso, ele pode usar o protocolo DJI RS SDK para estabelecer soluções com suportes para carro, lanças, Steadicam, câmeras de cabo e controles deslizantes‌ </span><sup style="color: white; font-size: 8.82px; font-family: Open Sans; font-weight: 400; line-height: 0; word-wrap: break-word; vertical-align: 4.87px">[12]</sup><span style="color: white; font-size: 14px; font-family: Open Sans; font-weight: 400; line-height: 18.20px; word-wrap: break-word">‌ atendendo às necessidades criativas de cenários completos.</span></div>
+                <div class="dji-rs-4-pro-75" style="left: 97px; top: 18961px; position: absolute; color: white; font-size: 24px; font-family: Open Sans; font-weight: 600; line-height: 28.80px; word-wrap: break-word; letter-spacing: -0.02em">Soluções profissionais</div>
+                
+                <div class="dji-rs-4-pro-206" style="width: 277px; left: 45px; top: 8951.13px; position: absolute"><span style="color: white; font-size: 14px; font-family: Open Sans; font-weight: 400; line-height: 18.20px; word-wrap: break-word; letter-spacing: -0.03em">‌Concentre-se em assuntos em movimento com confiança com coleta mais rápida de informações do assunto e velocidade aprimorada do Focus Pro Motor.</span><sup style="color: white; font-size: 8.82px; font-family: Open Sans; font-weight: 400; line-height: 0; word-wrap: break-word; letter-spacing: -0.03em; vertical-align: 4.87px">[4]</sup></div>
+                <div class="dji-rs-4-pro-47" style="width: 253.95px; left: 45px; top: 8874.13px; position: absolute; color: white; font-size: 20px; font-family: Open Sans; font-weight: 600; line-height: 26px; word-wrap: break-word; letter-spacing: -0.03em">Taxa de atualização do LiDAR de 30 Hz</div>
+                <div class="dji-rs-4-pro-48" style="width: 110.92px; height: 42px; left: 45px; top: 8832.13px; position: absolute; color: #FF4D4F; font-size: 40px; font-family: Open Sans; font-weight: 600; line-height: 52px; word-wrap: break-word">30 Hz</div>
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                <div class="dji-rs-4-pro-146" style="width: 432px; height: 1009px; left: -2px; top: 19218px; position: absolute; background: #2D2D2C; overflow: hidden">
+                  <div class="dji-rs-4-pro-147" style="width: 378px; height: 177px; left: 22px; top: 114px; position: absolute; justify-content: center; display: flex; flex-direction: column; color: white; font-size: 36px; font-family: Open Sans; font-weight: 600; line-height: 43.20px; word-wrap: break-word; letter-spacing: -0.02em">DJI Brasil agora tem seu canal oficial para a compra dos seus produtos.</div>
+                  <div class="dji-rs-4-pro-148" style="width: 389px; height: 312px; left: 22px; top: 335px; position: absolute; color: white; font-size: 20px; font-family: Open Sans; font-weight: 400; word-wrap: break-word; letter-spacing: -0.02em">Este é o canal oficial da DJI no Brasil.<br><br>Comprando aqui, no site oficial, você tem a segurança de receber um produto original, regulamentado, certificado pelas agências nacionais competentes  e ainda fica 100% protegido pela nossa garantia e assistência.<br><br>ATENÇÃO: não nos responsabilizamos por produtos adquiridos em outros canais que não os oficiais.</div>
+                    <img class="dji-rs-4-pro-149" style="width: 428px; height: 383px; left: 2px; top: 626px; position: absolute" src="assets/dji-rs-4-pro-95.png" decoding="async" loading="lazy">
+                  </div>
+                  
+                  
+                
+        <div class="dji-rs-4-pro-box" data-lamina-tab-layout="mobile-tab-2" data-lamina-tab-selected="0">
+          <div class="dji-rs-4-pro-box-heading">Na caixa:</div>
+          <div class="dji-rs-4-pro-box-tabs">
+            <div class="dji-rs-4-pro-box-tablist lamina-tab-list" data-lamina-tab-list="mobile-tab-2" role="tablist">
+              <div class="dji-rs-4-pro-box-tab lamina-tab-trigger" data-lamina-tab-trigger="0" role="tab" aria-selected="true" tabindex="0"><span>Standard</span></div>
+              <div class="dji-rs-4-pro-box-tab lamina-tab-trigger" data-lamina-tab-trigger="1" role="tab" aria-selected="false" tabindex="-1"><span>Combo</span></div>
+            </div>
+          </div>
+          <div class="dji-rs-4-pro-box-panel lamina-tab-panel" data-lamina-tab-panel="0">
+            <div class="dji-rs-4-pro-box-title">Estabilizador DJI RS 4 Pro Standard BR</div>
+            <div class="dji-rs-4-pro-box-grid">
+            <div class="dji-rs-4-pro-box-item">
+              <div class="dji-rs-4-pro-box-card"><img src="assets/dji-rs-4-pro-box-estabilizador.png" alt="Estabilizador DJI RS 4 Pro" decoding="async" loading="lazy"></div>
+              <div class="dji-rs-4-pro-box-label">1x Estabilizador<br>DJI RS 4 Pro</div>
+            </div>
+            <div class="dji-rs-4-pro-box-item">
+              <div class="dji-rs-4-pro-box-card"><img src="assets/dji-rs-4-pro-box-punho.png" alt="Punho do estabilizador" decoding="async" loading="lazy"></div>
+              <div class="dji-rs-4-pro-box-label">1x Punho<br>do estabilizador</div>
+            </div>
+            <div class="dji-rs-4-pro-box-item">
+              <div class="dji-rs-4-pro-box-card"><img src="assets/dji-rs-4-pro-box-base.png" alt="Base de liberação rápida" decoding="async" loading="lazy"></div>
+              <div class="dji-rs-4-pro-box-label">1x Base de<br>liberação rápida</div>
+            </div>
+            <div class="dji-rs-4-pro-box-item">
+              <div class="dji-rs-4-pro-box-card"><img src="assets/dji-rs-4-pro-box-suporte-lente.png" alt="Suporte de fixação da lente" decoding="async" loading="lazy"></div>
+              <div class="dji-rs-4-pro-box-label">1x Suporte de<br>fixação da lente</div>
+            </div>
+            <div class="dji-rs-4-pro-box-item">
+              <div class="dji-rs-4-pro-box-card"><img src="assets/dji-rs-4-pro-box-cabos-multicamera.png" alt="Cabos de controle multicâmeras USB-C (30 cm)" decoding="async" loading="lazy"></div>
+              <div class="dji-rs-4-pro-box-label">2x Cabos de controle<br>multicâmeras USB-C (30 cm)</div>
+            </div>
+            <div class="dji-rs-4-pro-box-item">
+              <div class="dji-rs-4-pro-box-card"><img src="assets/dji-rs-4-pro-box-cabo-40.png" alt="Cabo de carregamento USB-C (40 cm)" decoding="async" loading="lazy"></div>
+              <div class="dji-rs-4-pro-box-label">1x Cabo de carregamento<br>USB-C (40 cm)</div>
+            </div>
+            <div class="dji-rs-4-pro-box-item">
+              <div class="dji-rs-4-pro-box-card"><img src="assets/dji-rs-4-pro-box-cabo-30-standard.png" alt="Cabo de carregamento USB-C (30 cm)" decoding="async" loading="lazy"></div>
+              <div class="dji-rs-4-pro-box-label">1x Cabo de carregamento<br>USB-C (30 cm)</div>
+            </div>
+            <div class="dji-rs-4-pro-box-item">
+              <div class="dji-rs-4-pro-box-card"><img src="assets/dji-rs-4-pro-box-adesivo.png" alt="Adesivo" decoding="async" loading="lazy"></div>
+              <div class="dji-rs-4-pro-box-label">1x Adesivo</div>
+            </div>
+            <div class="dji-rs-4-pro-box-item">
+              <div class="dji-rs-4-pro-box-card"><img src="assets/dji-rs-4-pro-box-maleta.png" alt="Maleta de transporte" decoding="async" loading="lazy"></div>
+              <div class="dji-rs-4-pro-box-label">1x Maleta de transporte</div>
+            </div>
+            <div class="dji-rs-4-pro-box-item">
+              <div class="dji-rs-4-pro-box-card"><img src="assets/dji-rs-4-pro-box-alca.png" alt="Alça de suporte ajustável" decoding="async" loading="lazy"></div>
+              <div class="dji-rs-4-pro-box-label">1x Alça de<br>suporte ajustável</div>
+            </div>
+            <div class="dji-rs-4-pro-box-item">
+              <div class="dji-rs-4-pro-box-card"><img src="assets/dji-rs-4-pro-box-tripe-standard.png" alt="Tripé (metal)" decoding="async" loading="lazy"></div>
+              <div class="dji-rs-4-pro-box-label">1x Tripé (metal)</div>
+            </div>
+            </div>
+          </div>
+          <div class="dji-rs-4-pro-box-panel lamina-tab-panel" data-lamina-tab-panel="1" hidden="hidden">
+            <div class="dji-rs-4-pro-box-title">Estabilizador DJI RS 4 Pro Combo BR</div>
+            <div class="dji-rs-4-pro-box-grid">
+            <div class="dji-rs-4-pro-box-item">
+              <div class="dji-rs-4-pro-box-card"><img src="assets/dji-rs-4-pro-box-estabilizador.png" alt="Estabilizador DJI RS 4 Pro" decoding="async" loading="lazy"></div>
+              <div class="dji-rs-4-pro-box-label">1x Estabilizador<br>DJI RS 4 Pro</div>
+            </div>
+            <div class="dji-rs-4-pro-box-item">
+              <div class="dji-rs-4-pro-box-card"><img src="assets/dji-rs-4-pro-box-punho.png" alt="Punho do estabilizador" decoding="async" loading="lazy"></div>
+              <div class="dji-rs-4-pro-box-label">1x Punho<br>do estabilizador</div>
+            </div>
+            <div class="dji-rs-4-pro-box-item">
+              <div class="dji-rs-4-pro-box-card"><img src="assets/dji-rs-4-pro-box-base.png" alt="Base de liberação rápida" decoding="async" loading="lazy"></div>
+              <div class="dji-rs-4-pro-box-label">1x Base de<br>liberação rápida</div>
+            </div>
+            <div class="dji-rs-4-pro-box-item">
+              <div class="dji-rs-4-pro-box-card"><img src="assets/dji-rs-4-pro-box-tripe.png" alt="Tripé (metal)" decoding="async" loading="lazy"></div>
+              <div class="dji-rs-4-pro-box-label">1x Tripé (metal)</div>
+            </div>
+            <div class="dji-rs-4-pro-box-item">
+              <div class="dji-rs-4-pro-box-card"><img src="assets/dji-rs-4-pro-box-suporte-lente.png" alt="Suporte de fixação da lente" decoding="async" loading="lazy"></div>
+              <div class="dji-rs-4-pro-box-label">1x Suporte de<br>fixação da lente</div>
+            </div>
+            <div class="dji-rs-4-pro-box-item">
+              <div class="dji-rs-4-pro-box-card"><img src="assets/dji-rs-4-pro-box-cabos-multicamera.png" alt="Cabos de controle multicâmeras USB-C (30 cm)" decoding="async" loading="lazy"></div>
+              <div class="dji-rs-4-pro-box-label">2x Cabos de controle<br>multicâmeras USB-C (30 cm)</div>
+            </div>
+            <div class="dji-rs-4-pro-box-item">
+              <div class="dji-rs-4-pro-box-card"><img src="assets/dji-rs-4-pro-box-cabo-40.png" alt="Cabo de carregamento USB-C (40 cm)" decoding="async" loading="lazy"></div>
+              <div class="dji-rs-4-pro-box-label">1x Cabo de carregamento<br>USB-C (40 cm)</div>
+            </div>
+            <div class="dji-rs-4-pro-box-item">
+              <div class="dji-rs-4-pro-box-card"><img src="assets/dji-rs-4-pro-box-kit-parafusos.png" alt="Kit de parafusos" decoding="async" loading="lazy"></div>
+              <div class="dji-rs-4-pro-box-label">1x Kit de parafusos</div>
+            </div>
+            <div class="dji-rs-4-pro-box-item">
+              <div class="dji-rs-4-pro-box-card"><img src="assets/dji-rs-4-pro-box-maleta.png" alt="Maleta de transporte" decoding="async" loading="lazy"></div>
+              <div class="dji-rs-4-pro-box-label">1x Maleta de transporte</div>
+            </div>
+            <div class="dji-rs-4-pro-box-item">
+              <div class="dji-rs-4-pro-box-card"><img src="assets/dji-rs-4-pro-box-adesivo.png" alt="Adesivo" decoding="async" loading="lazy"></div>
+              <div class="dji-rs-4-pro-box-label">1x Adesivo</div>
+            </div>
+            <div class="dji-rs-4-pro-box-item">
+              <div class="dji-rs-4-pro-box-card"><img src="assets/dji-rs-4-pro-box-alca.png" alt="Alça de suporte ajustável" decoding="async" loading="lazy"></div>
+              <div class="dji-rs-4-pro-box-label">1x Alça de<br>suporte ajustável</div>
+            </div>
+            <div class="dji-rs-4-pro-box-item">
+              <div class="dji-rs-4-pro-box-card"><img src="assets/dji-rs-4-pro-box-cabo-20.png" alt="Cabo de carregamento USB-C (20 cm)" decoding="async" loading="lazy"></div>
+              <div class="dji-rs-4-pro-box-label">1x Cabo de carregamento<br>USB-C (20 cm)</div>
+            </div>
+            <div class="dji-rs-4-pro-box-item">
+              <div class="dji-rs-4-pro-box-card"><img src="assets/dji-rs-4-pro-box-minihdmi-minihdmi.png" alt="Cabo MiniHDMI para MiniHDMI (20 cm)" decoding="async" loading="lazy"></div>
+              <div class="dji-rs-4-pro-box-label">1x Cabo MiniHDMI para<br>MiniHDMI (20 cm)</div>
+            </div>
+            <div class="dji-rs-4-pro-box-item">
+              <div class="dji-rs-4-pro-box-card"><img src="assets/dji-rs-4-pro-box-minihdmi-hdmi.png" alt="Cabo MiniHDMI para HDMI (20 cm)" decoding="async" loading="lazy"></div>
+              <div class="dji-rs-4-pro-box-label">1x Cabo MiniHDMI para<br>HDMI (20 cm)</div>
+            </div>
+            <div class="dji-rs-4-pro-box-item">
+              <div class="dji-rs-4-pro-box-card"><img src="assets/dji-rs-4-pro-box-minihdmi-microhdmi.png" alt="Cabo MiniHDMI para MicroHDMI (20 cm)" decoding="async" loading="lazy"></div>
+              <div class="dji-rs-4-pro-box-label">1x Cabo MiniHDMI para<br>MicroHDMI (20 cm)</div>
+            </div>
+            <div class="dji-rs-4-pro-box-item">
+              <div class="dji-rs-4-pro-box-card"><img src="assets/dji-rs-4-pro-box-transmissor-ronin.png" alt="Transmissor de imagem Ronin" decoding="async" loading="lazy"></div>
+              <div class="dji-rs-4-pro-box-label">1x Transmissor de<br>imagem Ronin</div>
+            </div>
+            <div class="dji-rs-4-pro-box-item">
+              <div class="dji-rs-4-pro-box-card"><img src="assets/dji-rs-4-pro-box-motor-focus-pro.png" alt="Motor Focus Pro" decoding="async" loading="lazy"></div>
+              <div class="dji-rs-4-pro-box-label">1x Motor Focus<br>Pro</div>
+            </div>
+            <div class="dji-rs-4-pro-box-item">
+              <div class="dji-rs-4-pro-box-card"><img src="assets/dji-rs-4-pro-box-adesivo-fiz.png" alt="Adesivo FIZ" decoding="async" loading="lazy"></div>
+              <div class="dji-rs-4-pro-box-label">1x Adesivo FIZ</div>
+            </div>
+            <div class="dji-rs-4-pro-box-item">
+              <div class="dji-rs-4-pro-box-card"><img src="assets/dji-rs-4-pro-box-faixa-engrenagem.png" alt="Faixa de engrenagem de foco" decoding="async" loading="lazy"></div>
+              <div class="dji-rs-4-pro-box-label">1x Faixa de engrenagem<br>de foco</div>
+            </div>
+            <div class="dji-rs-4-pro-box-item">
+              <div class="dji-rs-4-pro-box-card"><img src="assets/dji-rs-4-pro-box-base-2.png" alt="Base de liberação rápida" decoding="async" loading="lazy"></div>
+              <div class="dji-rs-4-pro-box-label">1x Base de<br>liberação rápida</div>
+            </div>
+            <div class="dji-rs-4-pro-box-item">
+              <div class="dji-rs-4-pro-box-card"><img src="assets/dji-rs-4-pro-box-placa-inferior.png" alt="Placa inferior de liberação rápida (estendida)" decoding="async" loading="lazy"></div>
+              <div class="dji-rs-4-pro-box-label">1x Placa inferior de<br>liberação rápida<br>(estendida)</div>
+            </div>
+            <div class="dji-rs-4-pro-box-item">
+              <div class="dji-rs-4-pro-box-card"><img src="assets/dji-rs-4-pro-box-suporte-telefone.png" alt="Suporte para telefone" decoding="async" loading="lazy"></div>
+              <div class="dji-rs-4-pro-box-label">1x Suporte para telefone</div>
+            </div>
+            </div>
+          </div>
+        </div>
+        <div class="dji-rs-4-pro-notes">
+          <p>1. O estabilizador requer reequilíbrio após alternar entre disparo horizontal e vertical.</p>
+          <p>2. Comparado ao DJI RS 3 Pro.</p>
+          <p>3. Vendidos separadamente.</p>
+          <p>4. O Combo DJI RS 4 Pro inclui o DJI Focus Pro Motor. Na versão individual, o motor é vendido separadamente.</p>
+          <p>5. A melhoria de 77% nos pontos de alcance e a triplicação do alcance de foco até alvos humanos foram medidas em comparação ao sensor telemétrico DJI LiDAR (RS). O aumento de 30% na velocidade do motor foi medido em comparação ao Focus Motor (2022) (DJI RS).</p>
+          <p>6. ‌É necessário habilitar a função de exibição de zoom de 2× na tela sensível ao toque do DJI RS 4 Pro.</p>
+          <p>7. Este valor indica a latência de resposta entre a unidade manual DJI Focus Pro e o DJI Focus Pro Motor.</p>
+          <p>8. Para obter mais detalhes sobre compatibilidade de câmeras e lentes, consulte a página do produto no site oficial da DJI.</p>
+          <p>9. O formato de ondas LiDAR só estará disponível quando o DJI RS 4 Pro estiver vinculado a um Focus Pro Motor.</p>
+          <p>10. Medido em um ambiente interno de 25° C (77° F) com o cardan equilibrado em um estado nivelado e estacionário até que o nível da bateria alcance 3% (com o punho da bateria alimentando apenas o cardan).</p>
+          <p>11. Medido em um ambiente interno de 25° C (77° F).</p>
+          <p>12. A configuração das soluções de gravação mencionadas acima requer o uso de um ou mais acessórios vendidos separadamente.</p>
+        </div></div>
+              </div>
+            </div>
+            <script src="https://djibrasil.vteximg.com.br/arquivos/processor.js?v=20260602-tabs"></script>
+<script>
+// lamina-qa - escala proporcional da prancheta mobile pela largura do container (ate 856px de largura).
+(() => {
+  const MAX_WIDTH = 856;
+  const layout = document.querySelector(".lamina-layout-mobile[data-lamina-fit]");
+  const board = layout && layout.querySelector(":scope > [data-lamina-fit-board]");
+  if (!board) return;
+
+  const designWidth = parseFloat(board.dataset.laminaFitBoard) || 428;
+  layout.style.setProperty("--lamina-fit-width", `${designWidth}px`);
+
+  function fit() {
+    const width = layout.clientWidth;
+    if (!width) return;
+    const scale = Math.min(width, MAX_WIDTH) / designWidth;
+    layout.style.setProperty("--lamina-fit-scale", scale);
+    layout.style.setProperty("--lamina-fit-offset", `${(width - designWidth * scale) / 2}px`);
+    layout.style.setProperty("--lamina-fit-height", `${board.offsetHeight * scale}px`);
+  }
+
+  fit();
+  if ("ResizeObserver" in window) {
+    const observer = new ResizeObserver(fit);
+    observer.observe(layout);
+    observer.observe(board);
+  }
+  window.addEventListener("resize", fit, { passive: true });
+  window.addEventListener("load", fit);
+  document.fonts?.ready?.then(fit);
+})();
+</script>
+<script>
+// dji-rs-4-pro - abas "Na caixa" mudam a altura da lamina: reescala o desktop e ajusta a faixa lateral do tablet.
+(() => {
+  const mobile = document.querySelector(".lamina-layout-mobile[data-lamina-fit]");
+  const box = mobile && mobile.querySelector(".dji-rs-4-pro-box");
+
+  function sync() {
+    if (box && mobile) mobile.style.setProperty("--dji-rs-4-pro-box-h", `${box.offsetHeight}px`);
+  }
+
+  function refresh() {
+    sync();
+    window.dispatchEvent(new Event("resize"));
+    requestAnimationFrame(() => {
+      sync();
+      window.dispatchEvent(new Event("resize"));
+    });
+  }
+
+  document.addEventListener("click", (event) => {
+    if (event.target.closest && event.target.closest(".dji-rs-4-pro-box [data-lamina-tab-trigger]")) refresh();
+  });
+  document.addEventListener("keydown", (event) => {
+    if ((event.key === "Enter" || event.key === " ") && event.target.closest && event.target.closest(".dji-rs-4-pro-box [data-lamina-tab-trigger]")) refresh();
+  });
+  if (box && "ResizeObserver" in window) new ResizeObserver(sync).observe(box);
+  window.addEventListener("load", sync);
+  window.addEventListener("resize", sync, { passive: true });
+  sync();
+})();
+</script>
+          
+        
+</body></html>
